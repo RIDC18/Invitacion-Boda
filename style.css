@@ -373,9 +373,10 @@ body.no-scroll{ overflow:hidden; height:100vh; }
   font-size:clamp(17px, 4.8vw, 22px);
   color:#3F4D43;
   width:100%;
-  max-width:300px;
+  max-width:320px;
   line-height:1.48;
   text-align:center;
+  text-wrap:balance;
   opacity:0;
   animation:gateFade 760ms ease 150ms forwards;
 }
