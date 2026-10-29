@@ -1193,17 +1193,21 @@ body.no-scroll {
 
 .welcome__photo {
   max-width: 330px;
-  margin: 24px auto 0;
+  margin: 28px auto 0;
   border-radius: var(--radio);
   overflow: hidden;
-  box-shadow: var(--sombra);
+  box-shadow: 0 20px 48px -20px rgba(47, 79, 62, 0.42);
   border: 1px solid var(--linea);
+  background: var(--nacar);
+  padding: 8px;
 }
 
 .welcome__photo img {
   width: 100%;
   height: auto;
   display: block;
+  border-radius: calc(var(--radio) - 8px);
+  object-fit: cover;
 }
 
 .welcome {
