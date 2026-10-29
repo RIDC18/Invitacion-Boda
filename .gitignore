@@ -1,0 +1,16 @@
+# Salidas de herramientas / capturas de verificación (pesan ~120 MB, incluyen perfiles de Chrome)
+checkpoints/
+*.zip
+firebase-debug.log
+.firebase/
+
+# Node / SO / editores
+node_modules/
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Índice local de vexp (ya tiene su propio .gitignore interno)
+.vexp/
+

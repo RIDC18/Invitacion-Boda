@@ -1,0 +1,13 @@
+{
+  "name": "invitacion-boda-diego-liz",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Invitación digital de boda de Diego & Liz (sitio estático HTML/CSS/JS en Firebase Hosting + RSVP en Google Sheets vía Apps Script).",
+  "scripts": {
+    "dev": "python -m http.server 5500",
+    "check": "node --check app.js && node --check sw.js && echo OK: sintaxis JS valida",
+    "deploy": "npx --yes firebase-tools@latest deploy --only hosting",
+    "login": "npx --yes firebase-tools@latest login"
+  }
+}
+

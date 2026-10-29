@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"D:/Desarrollo/Desarrollo Paginas Web/Invitacion Boda/.codex/vexp-hint.sh\"",
+            "commandWindows": "cmd /d /c call \"D:\\Desarrollo\\Desarrollo Paginas Web\\Invitacion Boda\\.codex\\vexp-hint.cmd\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}
