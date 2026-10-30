@@ -380,19 +380,20 @@ const sonidoApertura = (() => {
     salida.connect(ctx.destination);
     await ctx.resume();
 
-    const t = ctx.currentTime + 0.03;
-    golpeSello(t);                                   // sello se rompe
-    roce(t + 0.12, 0.55, 1800, 4600, 0.34);          // solapa que se abre
-    roce(t + 0.55, 0.85, 3600, 1500, 0.2, 0.7);      // carta que sube
-    campanilla(1046.5, t + 1.1, 0.1);                // do
-    campanilla(1318.5, t + 1.27, 0.09);              // mi
-    campanilla(1568.0, t + 1.44, 0.08);              // sol
-    roce(t + 2.25, 1.0, 900, 260, 0.12, 0.6);        // portal que se desvanece
+    const t = ctx.currentTime + 0.04;
+    golpeSello(t);                                      // sello se rompe
+    roce(t + 0.16, 0.70, 1600, 4400, 0.32);             // solapa que se abre
+    roce(t + 0.75, 1.4, 3200, 1400, 0.22, 0.75);       // carta que sube
+    campanilla(1046.5, t + 2.05, 0.09);                 // Do
+    campanilla(1318.5, t + 2.22, 0.08);                 // Mi
+    campanilla(1568.0, t + 2.40, 0.08);                 // Sol
+    campanilla(2093.0, t + 2.60, 0.06);                 // Do agudo
+    roce(t + 4.35, 1.2, 750, 200, 0.14, 0.55);          // portal que se desvanece
 
     window.setTimeout(() => {
       if (ctx) ctx.close().catch(() => {});
       ctx = null;
-    }, 6500);
+    }, 7500);
   }
 
   return { reproducir };
@@ -407,7 +408,7 @@ async function reproducirMusica() {
     audio.muted = musicaSilenciada;
     try {
       await audio.play();
-      aparecerVolumen(audio, 0.48, 3500);
+      aparecerVolumen(audio, 0.48, 5500);
       musicaSintetica.pausar();
       actualizarIconoMusica(true, musicaSilenciada);
       return;
@@ -457,6 +458,7 @@ function setMusicaSilenciada(valor) {
     if (abierto) return;
     abierto = true;
 
+    gate.classList.add("gate--opening");
     envelope.classList.add("is-open");
 
     sonidoApertura.reproducir().catch(() => {});
@@ -469,11 +471,11 @@ function setMusicaSilenciada(valor) {
         if (musicToggle) musicToggle.classList.add("is-visible");
       });
 
-    const esperaCierre = prefiereMovimientoReducido ? 50 : 2300;
+    const esperaCierre = prefiereMovimientoReducido ? 50 : 4400;
     setTimeout(() => {
       gate.classList.add("gate--closing");
       document.body.classList.add("site-opened");
-      const esperaOculto = prefiereMovimientoReducido ? 0 : 1060;
+      const esperaOculto = prefiereMovimientoReducido ? 0 : 1200;
       setTimeout(() => {
         gate.style.display = "none";
         document.body.classList.remove("no-scroll");
