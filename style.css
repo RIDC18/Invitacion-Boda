@@ -1499,6 +1499,7 @@ body.no-scroll {
   margin-top: 42px;
   position: relative;
   padding-left: 0;
+  isolation: isolate;
 }
 
 .timeline__line {
@@ -1508,11 +1509,13 @@ body.no-scroll {
   bottom: calc(var(--node-size) / 2);
   width: 2px;
   background: linear-gradient(180deg, var(--salvia-claro), var(--salvia) 50%, var(--salvia-claro));
-  z-index: 1;
+  z-index: 0;
+  pointer-events: none;
 }
 
 .timeline__item {
   position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 18px;
@@ -1528,13 +1531,14 @@ body.no-scroll {
   width: var(--node-size);
   height: var(--node-size);
   border-radius: 50%;
+  background: var(--nacar);
   background: linear-gradient(180deg, var(--nacar), var(--crema));
   border: 1.4px solid var(--salvia);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
-  z-index: 2;
+  z-index: 3;
   color: var(--bosque);
   box-shadow: 0 12px 22px -17px rgba(47, 79, 62, 0.8);
 }
@@ -2699,18 +2703,18 @@ body.site-opened .progreso-scroll {
 }
 
 /* ---------- Revelado escalonado al hacer scroll ---------- */
-:is(.countdown__grid, .gifts-grid, .gallery__grid, .timeline) > :nth-child(1) { --i: 0; }
-:is(.countdown__grid, .gifts-grid, .gallery__grid, .timeline) > :nth-child(2) { --i: 1; }
-:is(.countdown__grid, .gifts-grid, .gallery__grid, .timeline) > :nth-child(3) { --i: 2; }
-:is(.countdown__grid, .gifts-grid, .gallery__grid, .timeline) > :nth-child(4) { --i: 3; }
-:is(.countdown__grid, .gifts-grid, .gallery__grid, .timeline) > :nth-child(5) { --i: 4; }
-:is(.countdown__grid, .gifts-grid, .gallery__grid, .timeline) > :nth-child(6) { --i: 5; }
-:is(.countdown__grid, .gifts-grid, .gallery__grid, .timeline) > :nth-child(7) { --i: 6; }
-:is(.countdown__grid, .gifts-grid, .gallery__grid, .timeline) > :nth-child(8) { --i: 7; }
+:is(.countdown__grid, .gifts-grid, .gallery__grid) > :nth-child(1), .timeline__item:nth-of-type(1) { --i: 0; }
+:is(.countdown__grid, .gifts-grid, .gallery__grid) > :nth-child(2), .timeline__item:nth-of-type(2) { --i: 1; }
+:is(.countdown__grid, .gifts-grid, .gallery__grid) > :nth-child(3), .timeline__item:nth-of-type(3) { --i: 2; }
+:is(.countdown__grid, .gifts-grid, .gallery__grid) > :nth-child(4), .timeline__item:nth-of-type(4) { --i: 3; }
+:is(.countdown__grid, .gifts-grid, .gallery__grid) > :nth-child(5) { --i: 4; }
+:is(.countdown__grid, .gifts-grid, .gallery__grid) > :nth-child(6) { --i: 5; }
+:is(.countdown__grid, .gifts-grid, .gallery__grid) > :nth-child(7) { --i: 6; }
+:is(.countdown__grid, .gifts-grid, .gallery__grid) > :nth-child(8) { --i: 7; }
 
 .reveal-enabled [data-aos].is-visible :is(
   .eyebrow, .section-title, .rings-icon, .welcome__card, .calendar-card,
-  .countdown__lead, .countdown__card, .countdown__caption, .timeline__item,
+  .countdown__lead, .countdown__card, .countdown__caption,
   .location-card, .dress-code__card, .gallery-intro, .gifts-card,
   .rsvp-card
 ) {
@@ -2735,8 +2739,14 @@ body.site-opened .progreso-scroll {
   animation-name: revelarPop;
 }
 
-.reveal-enabled [data-aos].is-visible .timeline__item {
-  animation-name: revelarDesdeIzquierda;
+.reveal-enabled [data-aos].is-visible .timeline__node {
+  animation: revelarPop 750ms var(--curva-elegante) backwards;
+  animation-delay: calc(var(--i, 0) * 120ms + 180ms);
+}
+
+.reveal-enabled [data-aos].is-visible .timeline__content {
+  animation: revelarDesdeIzquierda 850ms var(--curva-elegante) backwards;
+  animation-delay: calc(var(--i, 0) * 120ms + 260ms);
 }
 
 .reveal-enabled [data-aos].is-visible .gallery__item {
@@ -2754,7 +2764,7 @@ body.site-opened .progreso-scroll {
 
 .reveal-enabled [data-aos].is-visible .timeline__line {
   transform-origin: top center;
-  animation: crecerLinea 1800ms var(--curva-suave) 250ms backwards;
+  animation: crecerLinea 1300ms var(--curva-suave) 300ms backwards;
 }
 
 .reveal-enabled .final.is-visible > p:nth-child(1) { --i: 0; }
