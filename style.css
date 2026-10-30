@@ -1147,7 +1147,7 @@ body.no-scroll {
   display: flex;
   align-items: center;
   gap: 13px;
-  margin-top: 18px;
+  margin-top: 22px;
   color: var(--dorado);
 }
 
@@ -1166,36 +1166,8 @@ body.no-scroll {
   height: 18px;
 }
 
-.hero__date-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 14px;
-}
-
-.hero__date-line {
-  width: 28px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--dorado));
-  opacity: 0.55;
-}
-
-.hero__date-line:last-child {
-  background: linear-gradient(90deg, var(--dorado), transparent);
-}
-
-.hero__date-text {
-  font-family: var(--f-sans);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 3.2px;
-  text-transform: uppercase;
-  color: var(--dorado);
-}
-
 .hero__chevron {
-  margin: 28px auto 0;
+  margin: 34px auto 0;
   width: 22px;
   height: 22px;
   color: var(--salvia);
@@ -2811,10 +2783,6 @@ body.site-opened .progreso-scroll {
 
 .site-opened .hero__ornament svg {
   animation: revelarPop 900ms var(--curva-elegante) 1150ms backwards;
-}
-
-.site-opened .hero__date-badge {
-  animation: revelarSuave 1000ms var(--curva-elegante) 1300ms backwards;
 }
 
 .site-opened .hero__chevron {
