@@ -632,6 +632,8 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   const submitBtn = document.getElementById("rsvp-submit");
   const estadoExito = document.getElementById("rsvp-success");
   const estadoError = document.getElementById("rsvp-error");
+  const rsvpIntro = document.getElementById("rsvp-intro");
+  const rsvpNote = document.querySelector(".rsvp-note");
   const reintentar = document.getElementById("rsvp-retry");
   const campoNombre = document.getElementById("nombre");
   const campoApellido = document.getElementById("apellido");
@@ -664,6 +666,15 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
     form.style.display = "none";
     estadoExito.classList.remove("is-visible");
     estadoError.classList.remove("is-visible");
+
+    if (nodo === estadoExito) {
+      if (rsvpIntro) rsvpIntro.style.display = "none";
+      if (rsvpNote) rsvpNote.style.display = "none";
+    } else {
+      if (rsvpIntro) rsvpIntro.style.display = "";
+      if (rsvpNote) rsvpNote.style.display = "";
+    }
+
     if (nodo) nodo.classList.add("is-visible");
   }
 
@@ -744,6 +755,8 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   reintentar?.addEventListener("click", () => {
     estadoError.classList.remove("is-visible");
     form.style.display = "block";
+    if (rsvpIntro) rsvpIntro.style.display = "";
+    if (rsvpNote) rsvpNote.style.display = "";
   });
 })();
 
