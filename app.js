@@ -380,20 +380,20 @@ const sonidoApertura = (() => {
     salida.connect(ctx.destination);
     await ctx.resume();
 
-    const t = ctx.currentTime + 0.04;
+    const t = ctx.currentTime + 0.05;
     golpeSello(t);                                      // sello se rompe
-    roce(t + 0.16, 0.70, 1600, 4400, 0.32);             // solapa que se abre
-    roce(t + 0.75, 1.4, 3200, 1400, 0.22, 0.75);       // carta que sube
-    campanilla(1046.5, t + 2.05, 0.09);                 // Do
-    campanilla(1318.5, t + 2.22, 0.08);                 // Mi
-    campanilla(1568.0, t + 2.40, 0.08);                 // Sol
-    campanilla(2093.0, t + 2.60, 0.06);                 // Do agudo
-    roce(t + 4.35, 1.2, 750, 200, 0.14, 0.55);          // portal que se desvanece
+    roce(t + 0.40, 1.6, 1400, 3800, 0.32);              // solapa que se abre
+    roce(t + 1.80, 2.2, 2800, 1200, 0.22, 0.7);        // carta que sube
+    campanilla(1046.5, t + 4.60, 0.09);                 // Do
+    campanilla(1318.5, t + 4.85, 0.08);                 // Mi
+    campanilla(1568.0, t + 5.10, 0.08);                 // Sol
+    campanilla(2093.0, t + 5.35, 0.06);                 // Do agudo
+    roce(t + 8.10, 1.4, 650, 180, 0.14, 0.5);           // portal que se desvanece
 
     window.setTimeout(() => {
       if (ctx) ctx.close().catch(() => {});
       ctx = null;
-    }, 7500);
+    }, 11000);
   }
 
   return { reproducir };
@@ -408,7 +408,7 @@ async function reproducirMusica() {
     audio.muted = musicaSilenciada;
     try {
       await audio.play();
-      aparecerVolumen(audio, 0.48, 5500);
+      aparecerVolumen(audio, 0.48, 8000);
       musicaSintetica.pausar();
       actualizarIconoMusica(true, musicaSilenciada);
       return;
@@ -471,11 +471,11 @@ function setMusicaSilenciada(valor) {
         if (musicToggle) musicToggle.classList.add("is-visible");
       });
 
-    const esperaCierre = prefiereMovimientoReducido ? 50 : 4400;
+    const esperaCierre = 8200;
     setTimeout(() => {
       gate.classList.add("gate--closing");
       document.body.classList.add("site-opened");
-      const esperaOculto = prefiereMovimientoReducido ? 0 : 1200;
+      const esperaOculto = 1400;
       setTimeout(() => {
         gate.style.display = "none";
         document.body.classList.remove("no-scroll");
