@@ -10,6 +10,7 @@
   --salvia: #8EA68C;
   --salvia-claro: #BFD0BD;
   --salvia-muyclaro: #DAE6D8;
+  --eucalipto: #757F6E;
   --crema: #F8F5F0;
   --blanco: #FFFFFF;
   --dorado: #C8A468;
@@ -1775,7 +1776,8 @@ body.no-scroll {
 }
 
 .dress-code__swatch--eucalipto {
-  background: #71776A;
+  background: #757F6E;
+  background: var(--eucalipto, #757F6E);
   border: 1px solid rgba(63, 81, 65, 0.35);
 }
 
