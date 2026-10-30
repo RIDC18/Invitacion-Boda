@@ -1902,7 +1902,7 @@ body.no-scroll {
 }
 
 .transfer-collapse.is-open {
-  max-height: 500px;
+  max-height: 700px;
   opacity: 1;
   margin-top: 22px;
 }
@@ -1912,6 +1912,49 @@ body.no-scroll {
   border-radius: 14px;
   overflow: hidden;
   background: rgba(255, 253, 248, 0.75);
+}
+
+.transfer-account {
+  padding: 16px 16px 14px;
+  text-align: left;
+}
+
+.transfer-account__header {
+  margin-bottom: 8px;
+}
+
+.transfer-account__tag {
+  display: inline-block;
+  font-family: var(--f-sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--dorado);
+  margin-bottom: 2px;
+}
+
+.transfer-account__name {
+  font-family: var(--f-display);
+  font-size: 16.5px;
+  font-weight: 500;
+  color: var(--bosque);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.transfer-account .transfer-row--copy {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 10px;
+  border: 1px solid rgba(142, 166, 140, 0.18);
+}
+
+.transfer-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(142, 166, 140, 0.28), transparent);
+  margin: 0 14px;
 }
 
 .transfer-row {
