@@ -210,7 +210,14 @@ const musicaSintetica = (() => {
 
     crearNota(acorde[1] * 2, ahora + 2.5, 2.1, 0.008);
     paso += 1;
-    temporizador = window.setTimeout(programarCompas, 5400);
+    if (paso < acordes.length) {
+      temporizador = window.setTimeout(programarCompas, 5400);
+    } else {
+      temporizador = window.setTimeout(() => {
+        pausar();
+        actualizarIconoMusica(false, silenciada);
+      }, 5600);
+    }
   }
 
   async function reproducir() {
@@ -225,6 +232,7 @@ const musicaSintetica = (() => {
     }
 
     await ctx.resume();
+    paso = 0;
     reproduciendo = true;
     master.gain.cancelScheduledValues(ctx.currentTime);
     master.gain.setTargetAtTime(silenciada ? 0.0001 : 0.07, ctx.currentTime, 0.9);
@@ -380,20 +388,20 @@ const sonidoApertura = (() => {
     salida.connect(ctx.destination);
     await ctx.resume();
 
-    const t = ctx.currentTime + 0.05;
+    const t = ctx.currentTime + 0.04;
     golpeSello(t);                                      // sello se rompe
-    roce(t + 0.40, 1.6, 1400, 3800, 0.32);              // solapa que se abre
-    roce(t + 1.80, 2.2, 2800, 1200, 0.22, 0.7);        // carta que sube
-    campanilla(1046.5, t + 4.60, 0.09);                 // Do
-    campanilla(1318.5, t + 4.85, 0.08);                 // Mi
-    campanilla(1568.0, t + 5.10, 0.08);                 // Sol
-    campanilla(2093.0, t + 5.35, 0.06);                 // Do agudo
-    roce(t + 8.10, 1.4, 650, 180, 0.14, 0.5);           // portal que se desvanece
+    roce(t + 0.15, 0.70, 1400, 3600, 0.28);             // solapa que se abre
+    roce(t + 0.45, 1.1, 2800, 1200, 0.20, 0.7);        // carta / hoja que sube
+    campanilla(1046.5, t + 1.10, 0.08);                 // Do
+    campanilla(1318.5, t + 1.25, 0.07);                 // Mi
+    campanilla(1568.0, t + 1.40, 0.07);                 // Sol
+    campanilla(2093.0, t + 1.55, 0.05);                 // Do agudo
+    roce(t + 2.40, 0.8, 650, 180, 0.12, 0.5);           // portal que se desvanece
 
     window.setTimeout(() => {
       if (ctx) ctx.close().catch(() => {});
       ctx = null;
-    }, 11000);
+    }, 4000);
   }
 
   return { reproducir };
@@ -404,11 +412,15 @@ async function reproducirMusica() {
   const fuente = audio?.querySelector("source")?.getAttribute("src");
 
   if (audio && fuente) {
+    if (audio.ended) {
+      audio.currentTime = 0;
+    }
+    audio.loop = false;
     audio.volume = 0;
     audio.muted = musicaSilenciada;
     try {
       await audio.play();
-      aparecerVolumen(audio, 0.48, 8000);
+      aparecerVolumen(audio, 0.48, 3000);
       musicaSintetica.pausar();
       actualizarIconoMusica(true, musicaSilenciada);
       return;
@@ -471,11 +483,11 @@ function setMusicaSilenciada(valor) {
         if (musicToggle) musicToggle.classList.add("is-visible");
       });
 
-    const esperaCierre = 8200;
+    const esperaCierre = 2500;
     setTimeout(() => {
       gate.classList.add("gate--closing");
       document.body.classList.add("site-opened");
-      const esperaOculto = 1400;
+      const esperaOculto = 900;
       setTimeout(() => {
         gate.style.display = "none";
         document.body.classList.remove("no-scroll");
@@ -518,6 +530,15 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
 
 (function inicializarMusica() {
   const boton = document.getElementById("music-toggle");
+  const audio = document.getElementById("bg-music");
+
+  if (audio) {
+    audio.loop = false;
+    audio.addEventListener("ended", () => {
+      actualizarIconoMusica(false, musicaSilenciada);
+    });
+  }
+
   if (!boton) return;
 
   boton.addEventListener("click", () => {
