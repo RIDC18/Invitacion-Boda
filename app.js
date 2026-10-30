@@ -265,15 +265,149 @@ const musicaSintetica = (() => {
 
 let musicaSilenciada = false;
 
+/* Sube el volumen del MP3 poco a poco (con curva suave) para que el
+   sonido de apertura se escuche y la música entre sin sobresaltos.
+   En iOS el volumen es de solo lectura, ahí simplemente no hace efecto. */
+function aparecerVolumen(audio, objetivo, ms) {
+  const inicio = performance.now();
+  audio.volume = 0;
+
+  function paso(ahora) {
+    const t = Math.min(1, (ahora - inicio) / ms);
+    audio.volume = objetivo * t * t * (3 - 2 * t);
+    if (t < 1 && !audio.paused) requestAnimationFrame(paso);
+  }
+
+  requestAnimationFrame(paso);
+}
+
+/* -----------------------------------------------------------
+   SONIDO DE APERTURA DEL SOBRE
+   Sintetizado con Web Audio (no necesita archivos de audio):
+   chasquido del sello de cera, roce del papel al abrirse,
+   carta deslizándose, campanillas suaves y un leve "whoosh"
+   cuando el portal se desvanece. Sincronizado con las
+   animaciones del sobre en style.css.
+   ----------------------------------------------------------- */
+const sonidoApertura = (() => {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  let ctx = null;
+  let salida = null;
+
+  function crearRuido(duracion) {
+    const largo = Math.max(1, Math.floor(ctx.sampleRate * duracion));
+    const buffer = ctx.createBuffer(1, largo, ctx.sampleRate);
+    const datos = buffer.getChannelData(0);
+    for (let i = 0; i < largo; i++) datos[i] = Math.random() * 2 - 1;
+    return buffer;
+  }
+
+  // Roce de papel: ruido filtrado cuyo timbre "barre" de una frecuencia a otra
+  function roce(inicio, duracion, desde, hasta, volumen, q = 0.9) {
+    const fuente = ctx.createBufferSource();
+    fuente.buffer = crearRuido(duracion + 0.1);
+
+    const filtro = ctx.createBiquadFilter();
+    filtro.type = "bandpass";
+    filtro.Q.value = q;
+    filtro.frequency.setValueAtTime(desde, inicio);
+    filtro.frequency.exponentialRampToValueAtTime(hasta, inicio + duracion);
+
+    const ganancia = ctx.createGain();
+    ganancia.gain.setValueAtTime(0.0001, inicio);
+    ganancia.gain.exponentialRampToValueAtTime(volumen, inicio + duracion * 0.3);
+    ganancia.gain.exponentialRampToValueAtTime(0.0001, inicio + duracion);
+
+    fuente.connect(filtro);
+    filtro.connect(ganancia);
+    ganancia.connect(salida);
+    fuente.start(inicio);
+    fuente.stop(inicio + duracion + 0.1);
+  }
+
+  // Sello de cera que se rompe: chasquido seco + golpe grave corto
+  function golpeSello(inicio) {
+    const chasquido = ctx.createBufferSource();
+    chasquido.buffer = crearRuido(0.1);
+    const filtro = ctx.createBiquadFilter();
+    filtro.type = "highpass";
+    filtro.frequency.value = 1600;
+    const gChasquido = ctx.createGain();
+    gChasquido.gain.setValueAtTime(0.38, inicio);
+    gChasquido.gain.exponentialRampToValueAtTime(0.0001, inicio + 0.07);
+    chasquido.connect(filtro);
+    filtro.connect(gChasquido);
+    gChasquido.connect(salida);
+    chasquido.start(inicio);
+    chasquido.stop(inicio + 0.1);
+
+    const osc = ctx.createOscillator();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(190, inicio);
+    osc.frequency.exponentialRampToValueAtTime(62, inicio + 0.14);
+    const gGolpe = ctx.createGain();
+    gGolpe.gain.setValueAtTime(0.5, inicio);
+    gGolpe.gain.exponentialRampToValueAtTime(0.0001, inicio + 0.2);
+    osc.connect(gGolpe);
+    gGolpe.connect(salida);
+    osc.start(inicio);
+    osc.stop(inicio + 0.24);
+  }
+
+  // Campanilla suave con un parcial una octava arriba
+  function campanilla(frecuencia, inicio, volumen) {
+    [1, 2.01].forEach((multiplo, i) => {
+      const osc = ctx.createOscillator();
+      const ganancia = ctx.createGain();
+      osc.type = "sine";
+      osc.frequency.value = frecuencia * multiplo;
+      ganancia.gain.setValueAtTime(0.0001, inicio);
+      ganancia.gain.exponentialRampToValueAtTime(volumen / (i + 1), inicio + 0.02);
+      ganancia.gain.exponentialRampToValueAtTime(0.0001, inicio + 2.4);
+      osc.connect(ganancia);
+      ganancia.connect(salida);
+      osc.start(inicio);
+      osc.stop(inicio + 2.5);
+    });
+  }
+
+  async function reproducir() {
+    if (!AudioContextClass || musicaSilenciada) return;
+
+    ctx = new AudioContextClass();
+    salida = ctx.createGain();
+    salida.gain.value = 0.9;
+    salida.connect(ctx.destination);
+    await ctx.resume();
+
+    const t = ctx.currentTime + 0.03;
+    golpeSello(t);                                   // sello se rompe
+    roce(t + 0.12, 0.55, 1800, 4600, 0.34);          // solapa que se abre
+    roce(t + 0.55, 0.85, 3600, 1500, 0.2, 0.7);      // carta que sube
+    campanilla(1046.5, t + 1.1, 0.1);                // do
+    campanilla(1318.5, t + 1.27, 0.09);              // mi
+    campanilla(1568.0, t + 1.44, 0.08);              // sol
+    roce(t + 2.25, 1.0, 900, 260, 0.12, 0.6);        // portal que se desvanece
+
+    window.setTimeout(() => {
+      if (ctx) ctx.close().catch(() => {});
+      ctx = null;
+    }, 6500);
+  }
+
+  return { reproducir };
+})();
+
 async function reproducirMusica() {
   const audio = document.getElementById("bg-music");
   const fuente = audio?.querySelector("source")?.getAttribute("src");
 
   if (audio && fuente) {
-    audio.volume = 0.48;
+    audio.volume = 0;
     audio.muted = musicaSilenciada;
     try {
       await audio.play();
+      aparecerVolumen(audio, 0.48, 3500);
       musicaSintetica.pausar();
       actualizarIconoMusica(true, musicaSilenciada);
       return;
@@ -325,6 +459,8 @@ function setMusicaSilenciada(valor) {
 
     envelope.classList.add("is-open");
 
+    sonidoApertura.reproducir().catch(() => {});
+
     reproducirMusica()
       .then(() => {
         if (musicToggle) musicToggle.classList.add("is-visible");
@@ -336,7 +472,8 @@ function setMusicaSilenciada(valor) {
     const esperaCierre = prefiereMovimientoReducido ? 50 : 2300;
     setTimeout(() => {
       gate.classList.add("gate--closing");
-      const esperaOculto = prefiereMovimientoReducido ? 0 : 820;
+      document.body.classList.add("site-opened");
+      const esperaOculto = prefiereMovimientoReducido ? 0 : 1060;
       setTimeout(() => {
         gate.style.display = "none";
         document.body.classList.remove("no-scroll");
@@ -654,4 +791,31 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
     estadoError.classList.remove("is-visible");
     form.style.display = "block";
   });
+})();
+
+
+/* -----------------------------------------------------------
+   11. BARRA DE PROGRESO DE LECTURA — hilo dorado arriba de la página
+   ----------------------------------------------------------- */
+(function inicializarProgresoScroll() {
+  const barra = document.getElementById("progreso-scroll");
+  if (!barra) return;
+
+  let pendiente = false;
+
+  function actualizar() {
+    pendiente = false;
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    const progreso = total > 0 ? Math.min(1, Math.max(0, window.scrollY / total)) : 0;
+    barra.style.transform = `scaleX(${progreso})`;
+  }
+
+  window.addEventListener("scroll", () => {
+    if (pendiente) return;
+    pendiente = true;
+    requestAnimationFrame(actualizar);
+  }, { passive: true });
+
+  window.addEventListener("resize", actualizar);
+  actualizar();
 })();
