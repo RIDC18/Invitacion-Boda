@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20261030_1315">
+<link rel="stylesheet" href="style.css?v=20261030_1330">
 
 <!-- Definida aquí (no en app.js) para que esté disponible apenas el
      navegador intenta cargar las fotos de la galería -->
@@ -547,79 +547,71 @@
   </div>
 
   <!-- =======================================================
-       REGALOS
+       REGALOS / UN DETALLE CON AMOR
        ======================================================= -->
   <section class="section-pad gifts-section" data-aos="fade-up">
-    <p class="eyebrow">Mesa de regalos</p>
-    <h2 class="section-title">Regalos</h2>
+    <h2 class="section-title">Un detalle con amor</h2>
 
-    <p class="gifts-intro">Tu presencia es nuestro mejor regalo. Si deseas acompañarnos con un detalle, estas serán las opciones disponibles.</p>
+    <div class="gifts-card">
+      <p class="gifts-lead">El regalo más hermoso será contar con tu presencia en este día tan especial.</p>
+      <p class="gifts-sub">Si además deseás hacernos un obsequio, podés hacerlo a través de una transferencia bancaria.</p>
 
-    <div class="gifts-grid">
-      <article class="gift-card">
-        <span class="gift-card__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 12 V21 H4 V12"/>
-            <path d="M2 7 H22 V12 H2 Z"/>
-            <path d="M12 7 V21"/>
-            <path d="M12 7 C9 7 7 5.8 7 4.3 C7 3.2 7.9 2.5 9 2.5 C10.8 2.5 12 7 12 7 Z"/>
-            <path d="M12 7 C15 7 17 5.8 17 4.3 C17 3.2 16.1 2.5 15 2.5 C13.2 2.5 12 7 12 7 Z"/>
-          </svg>
-        </span>
-        <div>
-          <h3>Tupi</h3>
-          <p>Lista de regalos en tienda.</p>
-        </div>
-        <!-- EDITABLE: reemplaza # por el enlace real de Tupi y quita la clase is-disabled -->
-        <a class="btn btn--gift is-disabled" href="#" aria-disabled="true">Enlace pendiente</a>
-      </article>
+      <button type="button" class="btn btn--transfer" id="toggle-transfer-btn" aria-expanded="false" aria-controls="transfer-details">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="3" y="5" width="18" height="14" rx="2"/>
+          <path d="M3 10 H21"/>
+          <path d="M7 15 H9"/>
+          <path d="M12 15 H17"/>
+        </svg>
+        <span>Ver datos para transferencia</span>
+      </button>
 
-      <article class="gift-card">
-        <span class="gift-card__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M5 10 H19 L18 21 H6 Z"/>
-            <path d="M8 10 C8 5 16 5 16 10"/>
-            <path d="M9 14 H15"/>
-          </svg>
-        </span>
-        <div>
-          <h3>Otra tienda</h3>
-          <p>Segunda opción para regalos.</p>
-        </div>
-        <!-- EDITABLE: reemplaza # por el enlace real de la segunda empresa y quita la clase is-disabled -->
-        <a class="btn btn--gift is-disabled" href="#" aria-disabled="true">Enlace pendiente</a>
-      </article>
-
-      <article class="gift-card gift-card--transfer">
-        <span class="gift-card__icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="5" width="18" height="14" rx="2"/>
-            <path d="M3 9 H21"/>
-            <path d="M8 15 H10"/>
-            <path d="M13 15 H17"/>
-          </svg>
-        </span>
-        <div>
-          <h3>Transferencia</h3>
-          <p>Para quienes prefieran hacer llegar su regalo de forma directa.</p>
-        </div>
-
+      <div class="transfer-collapse" id="transfer-details">
         <div class="transfer-details">
-          <!-- EDITABLE: reemplaza estos valores cuando los novios confirmen los datos bancarios -->
-          <div class="transfer-row">
-            <span>Titular</span>
-            <strong>Datos a confirmar</strong>
-          </div>
           <div class="transfer-row">
             <span>Banco</span>
-            <strong>Datos a confirmar</strong>
+            <strong id="transfer-banco">Datos a confirmar</strong>
           </div>
           <div class="transfer-row">
-            <span>Cuenta / Alias</span>
-            <strong>Datos a confirmar</strong>
+            <span>Titular</span>
+            <strong id="transfer-titular">Diego &amp; Liz</strong>
+          </div>
+          <div class="transfer-row transfer-row--copy">
+            <div class="transfer-info">
+              <span>Alias</span>
+              <strong id="transfer-alias" class="transfer-highlight">BODA.DIEGO.LIZ</strong>
+            </div>
+            <button type="button" class="btn-copy" data-copy="BODA.DIEGO.LIZ" aria-label="Copiar alias">
+              <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                <path d="M5 15 H4 a2 2 0 0 1-2-2 V4 a2 2 0 0 1 2-2 h9 a2 2 0 0 1 2 2 v1"/>
+              </svg>
+              <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span class="btn-copy__text">Copiar</span>
+            </button>
+          </div>
+          <div class="transfer-row transfer-row--copy">
+            <div class="transfer-info">
+              <span>CBU / Cuenta</span>
+              <strong id="transfer-cbu">0000000000000000000000</strong>
+            </div>
+            <button type="button" class="btn-copy" data-copy="0000000000000000000000" aria-label="Copiar CBU o cuenta">
+              <svg class="icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="9" y="9" width="13" height="13" rx="2"/>
+                <path d="M5 15 H4 a2 2 0 0 1-2-2 V4 a2 2 0 0 1 2-2 h9 a2 2 0 0 1 2 2 v1"/>
+              </svg>
+              <svg class="icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span class="btn-copy__text">Copiar</span>
+            </button>
           </div>
         </div>
-      </article>
+      </div>
+
+      <p class="gifts-signature">Con cariño, Diego &amp; Liz</p>
     </div>
   </section>
 
@@ -689,6 +681,6 @@
   </svg>
 </button>
 
-<script src="app.js?v=20261030_1315"></script>
+<script src="app.js?v=20261030_1330"></script>
 </body>
 </html>

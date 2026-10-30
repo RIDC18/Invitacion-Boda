@@ -758,3 +758,74 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   window.addEventListener("resize", actualizar);
   actualizar();
 })();
+
+
+/* -----------------------------------------------------------
+   12. DATOS DE TRANSFERENCIA — desplegable y copiado rápido de Alias / CBU
+   ----------------------------------------------------------- */
+(function inicializarTransferencia() {
+  const toggleBtn = document.getElementById("toggle-transfer-btn");
+  const collapse = document.getElementById("transfer-details");
+
+  if (toggleBtn && collapse) {
+    toggleBtn.addEventListener("click", () => {
+      const estaAbierto = collapse.classList.toggle("is-open");
+      toggleBtn.setAttribute("aria-expanded", String(estaAbierto));
+      const span = toggleBtn.querySelector("span");
+      if (span) {
+        span.textContent = estaAbierto
+          ? "Ocultar datos de transferencia"
+          : "Ver datos para transferencia";
+      }
+    });
+  }
+
+  const botonesCopiar = document.querySelectorAll(".btn-copy");
+  botonesCopiar.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const strongTexto = btn.previousElementSibling?.querySelector("strong")?.textContent?.trim();
+      const texto = btn.getAttribute("data-copy") || strongTexto || "";
+      if (!texto) return;
+
+      copiarAlPortapapeles(texto).then(() => {
+        btn.classList.add("is-copied");
+        const span = btn.querySelector(".btn-copy__text");
+        const original = span ? span.textContent : "";
+        if (span) span.textContent = "¡Copiado!";
+
+        setTimeout(() => {
+          btn.classList.remove("is-copied");
+          if (span) span.textContent = original;
+        }, 2000);
+      }).catch((err) => {
+        console.warn("No se pudo copiar el texto:", err);
+      });
+    });
+  });
+
+  function copiarAlPortapapeles(texto) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(texto);
+    }
+    return new Promise((resolve, reject) => {
+      try {
+        const area = document.createElement("textarea");
+        area.value = texto;
+        area.style.position = "fixed";
+        area.style.top = "-9999px";
+        area.style.left = "-9999px";
+        area.style.opacity = "0";
+        document.body.appendChild(area);
+        area.focus();
+        area.select();
+        const exito = document.execCommand("copy");
+        document.body.removeChild(area);
+        if (exito) resolve();
+        else reject(new Error("execCommand copy falló"));
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+})();
+

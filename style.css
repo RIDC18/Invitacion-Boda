@@ -1795,7 +1795,7 @@ body.no-scroll {
 }
 
 /* =========================================================
-   REGALOS
+   REGALOS / UN DETALLE CON AMOR
    ========================================================= */
 .gifts-section {
   padding-top: clamp(52px, 8vw, 68px);
@@ -1805,134 +1805,115 @@ body.no-scroll {
     var(--crema);
 }
 
-.gifts-intro {
-  max-width: 330px;
-  margin: 18px auto 0;
-  font-family: var(--f-serif);
-  font-style: italic;
-  font-size: 18px;
-  line-height: 1.65;
-  color: var(--tinta);
-}
-
-.gifts-grid {
-  display: grid;
-  gap: 16px;
-  margin-top: 34px;
-}
-
-.gift-card {
-  position: relative;
-  overflow: hidden;
-  display: grid;
-  grid-template-columns: 46px 1fr;
-  align-items: center;
-  gap: 14px;
-  text-align: left;
+.gifts-card {
+  margin: 28px auto 0;
+  max-width: 420px;
+  padding: 34px 24px 30px;
   border: 1px solid rgba(200, 164, 104, 0.24);
   border-radius: var(--radio);
-  padding: 22px 20px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(248, 245, 240, 0.94)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 245, 240, 0.96)),
     var(--nacar);
   box-shadow: var(--sombra-suave);
+  position: relative;
+  overflow: hidden;
+  text-align: center;
 }
 
-.gift-card::before {
-  content: '';
-  position: absolute;
-  inset: 0 0 auto;
-  height: 3px;
-  background: linear-gradient(90deg, var(--salvia-muyclaro), var(--dorado), var(--bosque));
-}
-
-.gift-card::after {
+.gifts-card::before {
   content: '';
   position: absolute;
   inset: 12px;
+  border: 1px solid rgba(142, 166, 140, 0.17);
   border-radius: calc(var(--radio) - 6px);
   pointer-events: none;
   background:
     linear-gradient(90deg, rgba(200, 164, 104, 0.024) 1px, transparent 1px),
     linear-gradient(180deg, rgba(142, 166, 140, 0.018) 1px, transparent 1px);
   background-size: 30px 30px;
-  opacity: .65;
 }
 
-.gift-card>* {
+.gifts-card > * {
   position: relative;
   z-index: 1;
 }
 
-.gift-card__icon {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  display: flex;
+.gifts-lead {
+  font-family: var(--f-serif);
+  font-style: normal;
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--tinta);
+  margin: 0;
+}
+
+.gifts-sub {
+  font-family: var(--f-serif);
+  font-style: normal;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--tinta);
+  margin-top: 18px;
+  margin-bottom: 0;
+}
+
+.btn--transfer {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--dorado);
-  background: rgba(218, 230, 216, 0.42);
-  border: 1px solid rgba(200, 164, 104, 0.28);
+  gap: 10px;
+  margin: 26px auto 0;
+  padding: 13px 24px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--bosque), #22372b);
+  color: #FFFFFF;
+  font-family: var(--f-sans);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  box-shadow: 0 10px 24px -10px rgba(47, 79, 62, 0.6);
+  transition: all 300ms var(--curva-suave);
+  cursor: pointer;
+  border: none;
 }
 
-.gift-card__icon svg {
-  width: 24px;
-  height: 24px;
+.btn--transfer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -10px rgba(47, 79, 62, 0.7);
 }
 
-.gift-card h3 {
-  font-family: var(--f-display);
-  font-size: 21px;
-  color: var(--bosque);
-  font-weight: 500;
+.btn--transfer svg {
+  width: 17px;
+  height: 17px;
+  color: var(--dorado-suave);
 }
 
-.gift-card p {
-  margin-top: 5px;
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--tinta);
+.transfer-collapse {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 500ms var(--curva-suave), opacity 400ms ease, margin-top 300ms ease;
+  margin-top: 0;
 }
 
-.btn--gift {
-  grid-column: 1 / -1;
-  justify-content: center;
-  width: 100%;
-  margin-top: 4px;
-  padding: 12px 18px;
-  font-size: 11px;
-}
-
-.btn.is-disabled,
-.btn.is-disabled:hover {
-  background: rgba(115, 138, 110, 0.52);
-  color: rgba(248, 245, 240, 0.9);
-  box-shadow: none;
-  transform: none;
-  cursor: not-allowed;
-}
-
-.gift-card--transfer {
-  display: block;
-  text-align: center;
-}
-
-.gift-card--transfer .gift-card__icon {
-  margin: 0 auto 14px;
+.transfer-collapse.is-open {
+  max-height: 500px;
+  opacity: 1;
+  margin-top: 22px;
 }
 
 .transfer-details {
-  margin-top: 18px;
-  border: 1px solid rgba(142, 166, 140, 0.18);
+  border: 1px solid rgba(142, 166, 140, 0.22);
   border-radius: 14px;
   overflow: hidden;
-  background: rgba(255, 253, 248, 0.56);
+  background: rgba(255, 253, 248, 0.75);
 }
 
 .transfer-row {
   display: grid;
-  grid-template-columns: 112px 1fr;
+  grid-template-columns: 100px 1fr;
+  align-items: center;
   gap: 10px;
   padding: 12px 14px;
   border-bottom: 1px solid rgba(142, 166, 140, 0.14);
@@ -1956,6 +1937,89 @@ body.no-scroll {
   font-size: 13px;
   font-weight: 500;
   color: var(--tinta);
+  word-break: break-all;
+}
+
+.transfer-row--copy {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.transfer-row--copy .transfer-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  min-width: 0;
+}
+
+.transfer-highlight {
+  font-family: var(--f-sans);
+  font-weight: 600;
+  color: var(--bosque);
+  letter-spacing: 0.8px;
+}
+
+.btn-copy {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border-radius: 8px;
+  background: var(--salvia-muyclaro);
+  color: var(--bosque);
+  border: 1px solid rgba(115, 138, 110, 0.35);
+  font-family: var(--f-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 250ms ease;
+  white-space: nowrap;
+}
+
+.btn-copy:hover {
+  background: var(--salvia-claro);
+  transform: translateY(-1px);
+}
+
+.btn-copy:active {
+  transform: scale(0.96);
+}
+
+.btn-copy svg {
+  width: 14px;
+  height: 14px;
+}
+
+.btn-copy .icon-check {
+  display: none;
+}
+
+.btn-copy.is-copied {
+  background: var(--bosque);
+  color: #FFFFFF;
+  border-color: var(--bosque);
+}
+
+.btn-copy.is-copied .icon-copy {
+  display: none;
+}
+
+.btn-copy.is-copied .icon-check {
+  display: block;
+}
+
+.gifts-signature {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--bosque);
+  margin-top: 28px;
+  margin-bottom: 0;
 }
 
 /* =========================================================
@@ -2621,7 +2685,7 @@ body.site-opened .progreso-scroll {
 .reveal-enabled [data-aos].is-visible :is(
   .eyebrow, .section-title, .rings-icon, .welcome__card, .calendar-card,
   .countdown__lead, .countdown__card, .countdown__caption, .timeline__item,
-  .location-card, .dress-code__card, .gallery-intro, .gifts-intro, .gift-card,
+  .location-card, .dress-code__card, .gallery-intro, .gifts-card,
   .rsvp-card
 ) {
   animation: revelarSuave 1100ms var(--curva-elegante) backwards;
@@ -2677,7 +2741,7 @@ body.site-opened .progreso-scroll {
 }
 
 /* Elevación suave al pasar el mouse (solo dispositivos con hover) */
-.gift-card,
+.gifts-card,
 .countdown__card,
 .location-card,
 .timeline__content,
@@ -2690,7 +2754,7 @@ body.site-opened .progreso-scroll {
 }
 
 @media (hover: hover) {
-  .gift-card:hover,
+  .gifts-card:hover,
   .location-card:hover,
   .dress-code__card:hover {
     transform: translateY(-5px);
