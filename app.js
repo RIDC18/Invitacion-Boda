@@ -41,14 +41,16 @@ function activarReveladoScroll() {
   const observer = new IntersectionObserver(
     (entradas) => {
       entradas.forEach((entrada) => {
-        if (!entrada.isIntersecting) return;
-        entrada.target.classList.add("is-visible");
-        observer.unobserve(entrada.target);
+        if (entrada.isIntersecting) {
+          entrada.target.classList.add("is-visible");
+        } else {
+          entrada.target.classList.remove("is-visible");
+        }
       });
     },
     {
-      rootMargin: "0px 0px -40px 0px",
-      threshold: 0.1,
+      rootMargin: "0px 0px -30px 0px",
+      threshold: 0.06,
     }
   );
 
