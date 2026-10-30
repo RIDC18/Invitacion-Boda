@@ -1021,8 +1021,12 @@ body.no-scroll {
   right: 24px;
   bottom: 24px;
   left: 24px;
-  border: 1px solid rgba(200, 164, 104, 0.30);
+  border: 1px solid rgba(200, 164, 104, 0.32);
   border-radius: 170px 170px 24px 24px;
+  box-shadow:
+    inset 0 0 0 5px rgba(248, 245, 240, 0.7),
+    inset 0 0 0 6px rgba(200, 164, 104, 0.16);
+  pointer-events: none;
   z-index: 1;
 }
 
@@ -1057,28 +1061,47 @@ body.no-scroll {
 }
 
 .hero__monogram {
-  width: 94px;
-  height: 94px;
-  border: 1px solid rgba(200, 164, 104, 0.42);
+  position: relative;
+  width: 124px;
+  height: 124px;
+  border: 1.2px solid rgba(200, 164, 104, 0.48);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 22px;
   font-family: var(--f-script);
-  font-size: 36px;
+  font-size: 48px;
   color: var(--dorado);
   background:
-    radial-gradient(circle at 50% 42%, rgba(248, 245, 240, 0.62), rgba(221, 230, 218, 0.38) 72%, rgba(248, 245, 240, 0.22)),
-    rgba(218, 230, 216, 0.24);
-  box-shadow: inset 0 0 0 8px rgba(248, 245, 240, 0.28), 0 18px 42px -30px rgba(47, 79, 62, 0.55);
+    radial-gradient(circle at 50% 42%, rgba(248, 245, 240, 0.75), rgba(221, 230, 218, 0.42) 72%, rgba(248, 245, 240, 0.35)),
+    rgba(218, 230, 216, 0.28);
+  box-shadow:
+    0 0 0 3px rgba(248, 245, 240, 0.95),
+    0 0 0 4.5px rgba(200, 164, 104, 0.32),
+    inset 0 0 0 4px rgba(248, 245, 240, 0.75),
+    inset 0 0 0 5.5px rgba(200, 164, 104, 0.22),
+    0 20px 45px -22px rgba(47, 79, 62, 0.45);
   animation: monogramFloat 5.8s ease-in-out infinite;
 }
 
+.hero__monogram-wreath {
+  position: absolute;
+  top: -24px;
+  left: -24px;
+  width: calc(100% + 48px);
+  height: calc(100% + 48px);
+  pointer-events: none;
+  overflow: visible;
+  z-index: 1;
+}
+
 .hero__monogram span {
+  position: relative;
+  z-index: 2;
   display: block;
   line-height: 1;
-  transform: translateX(-2px) scale(.82);
+  transform: translateX(-1px) scale(.88);
   transform-origin: center;
   white-space: nowrap;
 }
@@ -1086,16 +1109,37 @@ body.no-scroll {
 .hero__eyebrow {
   font-family: var(--f-serif);
   font-style: italic;
-  font-size: 16px;
-  color: var(--tinta);
+  font-size: clamp(23px, 5.8vw, 30px);
+  font-weight: 500;
+  color: var(--bosque);
+  letter-spacing: 1.4px;
+  margin: 0 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.hero__eyebrow::before,
+.hero__eyebrow::after {
+  content: '';
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--dorado));
+  opacity: 0.65;
+}
+
+.hero__eyebrow::after {
+  background: linear-gradient(90deg, var(--dorado), transparent);
 }
 
 .hero__names {
   font-family: var(--f-script);
-  font-size: clamp(50px, 15vw, 68px);
+  font-size: clamp(54px, 16vw, 76px);
   color: var(--bosque);
-  margin-top: 8px;
-  line-height: 1;
+  margin-top: 4px;
+  margin-bottom: 0;
+  line-height: 1.05;
   text-shadow: 0 12px 28px rgba(47, 79, 62, 0.16);
 }
 
@@ -1103,7 +1147,7 @@ body.no-scroll {
   display: flex;
   align-items: center;
   gap: 13px;
-  margin-top: 24px;
+  margin-top: 18px;
   color: var(--dorado);
 }
 
@@ -1122,8 +1166,36 @@ body.no-scroll {
   height: 18px;
 }
 
+.hero__date-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.hero__date-line {
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--dorado));
+  opacity: 0.55;
+}
+
+.hero__date-line:last-child {
+  background: linear-gradient(90deg, var(--dorado), transparent);
+}
+
+.hero__date-text {
+  font-family: var(--f-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 3.2px;
+  text-transform: uppercase;
+  color: var(--dorado);
+}
+
 .hero__chevron {
-  margin: 38px auto 0;
+  margin: 28px auto 0;
   width: 22px;
   height: 22px;
   color: var(--salvia);
@@ -2558,14 +2630,15 @@ body.no-scroll {
   .hero {
     min-height: 100vh;
     min-height: 100svh;
-    padding: clamp(60px, 9svh, 96px) 20px clamp(46px, 7svh, 72px);
+    padding: clamp(52px, 8svh, 86px) 20px clamp(36px, 6svh, 60px);
   }
 
   .hero::before {
-    top: 34px;
+    top: 30px;
     right: 18px;
-    bottom: 22px;
+    bottom: 20px;
     left: 18px;
+    border-radius: 140px 140px 20px 20px;
   }
 
   .hero::after {
@@ -2575,24 +2648,38 @@ body.no-scroll {
   }
 
   .hero__lace--bottom {
-    bottom: 46px;
+    bottom: 40px;
   }
 
   .hero__monogram {
-    width: 86px;
-    height: 86px;
+    width: 112px;
+    height: 112px;
     margin-bottom: 18px;
-    font-size: 32px;
+    font-size: 44px;
+  }
+
+  .hero__monogram-wreath {
+    top: -20px;
+    left: -20px;
+    width: calc(100% + 40px);
+    height: calc(100% + 40px);
   }
 
   .hero__monogram span {
-    transform: translateX(-2px) scale(.82);
+    transform: translateX(-1px) scale(.88);
+  }
+
+  .hero__eyebrow {
+    font-size: clamp(21px, 5.5vw, 26px);
   }
 
   .hero__names {
-    font-size: clamp(48px, 18vw, 64px);
+    font-size: clamp(48px, 16vw, 66px);
   }
 
+  .hero__chevron {
+    margin-top: 22px;
+  }
 }
 
 /* =========================================================
@@ -2722,6 +2809,10 @@ body.site-opened .progreso-scroll {
 
 .site-opened .hero__ornament svg {
   animation: revelarPop 900ms var(--curva-elegante) 1150ms backwards;
+}
+
+.site-opened .hero__date-badge {
+  animation: revelarSuave 1000ms var(--curva-elegante) 1300ms backwards;
 }
 
 .site-opened .hero__chevron {
