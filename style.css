@@ -1919,32 +1919,17 @@ body.no-scroll {
   text-align: left;
 }
 
-.transfer-account__header {
-  margin-bottom: 8px;
-}
-
-.transfer-account__tag {
-  display: inline-block;
-  font-family: var(--f-sans);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 1.4px;
-  text-transform: uppercase;
-  color: var(--dorado);
-  margin-bottom: 2px;
-}
-
 .transfer-account__name {
   font-family: var(--f-display);
-  font-size: 16.5px;
-  font-weight: 500;
+  font-size: 17px;
+  font-weight: 600;
   color: var(--bosque);
   margin: 0;
   line-height: 1.35;
 }
 
 .transfer-account .transfer-row--copy {
-  margin-top: 8px;
+  margin-top: 10px;
   padding: 10px 12px;
   background: rgba(255, 255, 255, 0.72);
   border-radius: 10px;
