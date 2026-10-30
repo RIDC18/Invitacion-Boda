@@ -1718,6 +1718,75 @@ body.no-scroll {
   margin-top: 14px;
 }
 
+.dress-code__reserved {
+  margin-top: 24px;
+  padding-top: 20px;
+  position: relative;
+}
+
+.dress-code__divider {
+  display: block;
+  width: 44px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--dorado), transparent);
+  margin: 0 auto 18px;
+}
+
+.dress-code__reserved-title {
+  font-family: var(--f-sans);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: var(--salvia-oscuro);
+  margin-bottom: 14px;
+}
+
+.dress-code__palette {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.dress-code__color {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.dress-code__swatch {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 4px 10px -2px rgba(47, 79, 62, 0.25);
+  transition: transform 300ms var(--curva-suave);
+}
+
+.dress-code__swatch:hover {
+  transform: scale(1.1);
+}
+
+.dress-code__swatch--blanco {
+  background: #FFFFFF;
+  border: 1px solid rgba(142, 166, 140, 0.4);
+}
+
+.dress-code__swatch--eucalipto {
+  background: #71776A;
+  border: 1px solid rgba(63, 81, 65, 0.35);
+}
+
+.dress-code__color-name {
+  font-family: var(--f-sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  color: var(--tinta);
+}
+
 /* =========================================================
    REGALOS
    ========================================================= */
