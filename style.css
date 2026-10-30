@@ -1670,9 +1670,9 @@ body.no-scroll {
 }
 
 .dress-code__card {
-  margin: 34px auto 0;
-  max-width: 360px;
-  padding: 32px 24px;
+  margin: 18px auto 0;
+  max-width: 380px;
+  padding: 32px 26px;
   border: 1px solid rgba(200, 164, 104, 0.24);
   border-radius: var(--radio);
   background:
@@ -1696,64 +1696,26 @@ body.no-scroll {
   background-size: 30px 30px;
 }
 
-.dress-code__icon {
-  width: 42px;
-  height: 42px;
-  margin: 0 auto 16px;
-  color: var(--dorado);
+.dress-code__card p {
+  margin: 0;
 }
 
-.dress-code__card p {
+.dress-code__card .dress-code__lead {
   font-family: var(--f-serif);
-  font-style: italic;
-  font-size: 18px;
-  line-height: 1.65;
+  font-style: normal;
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.5;
   color: var(--tinta);
 }
 
-.dress-code__card span {
-  display: block;
-  margin-top: 18px;
-  font-family: var(--f-sans);
-  font-size: 10.5px;
-  letter-spacing: 1.6px;
-  text-transform: uppercase;
-  color: var(--salvia);
-}
-
-.dress-code__palette {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 20px;
-}
-
-.dress-code__palette i {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 1px solid rgba(63, 81, 65, 0.12);
-  box-shadow: 0 6px 12px -9px rgba(47, 79, 62, 0.65);
-}
-
-.dress-code__palette i:nth-child(1) {
-  background: #324D3E;
-}
-
-.dress-code__palette i:nth-child(2) {
-  background: #738A6E;
-}
-
-.dress-code__palette i:nth-child(3) {
-  background: #8EA68C;
-}
-
-.dress-code__palette i:nth-child(4) {
-  background: #BFD0BD;
-}
-
-.dress-code__palette i:nth-child(5) {
-  background: #DAE6D8;
+.dress-code__card .dress-code__sub {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--bosque);
+  margin-top: 14px;
 }
 
 /* =========================================================
