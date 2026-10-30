@@ -25,11 +25,11 @@ if ("serviceWorker" in navigator) {
 }
 
 /* -----------------------------------------------------------
-   1. REVELADO LOCAL — no depende de CDN ni oculta contenido si falla JS
+   1. REVELADO LOCAL — animaciones de scroll fluidas por secciones
    ----------------------------------------------------------- */
-(function inicializarRevelado() {
+function activarReveladoScroll() {
   const elementos = Array.from(document.querySelectorAll("[data-aos]"));
-  if (!elementos.length || prefiereMovimientoReducido) return;
+  if (!elementos.length) return;
 
   document.documentElement.classList.add("reveal-enabled");
 
@@ -38,25 +38,34 @@ if ("serviceWorker" in navigator) {
     return;
   }
 
-  const observer = new IntersectionObserver((entradas) => {
-    entradas.forEach((entrada) => {
-      if (!entrada.isIntersecting) return;
-      entrada.target.classList.add("is-visible");
-      observer.unobserve(entrada.target);
-    });
-  }, {
-    rootMargin: "0px 0px -8% 0px",
-    threshold: 0.08,
-  });
+  const observer = new IntersectionObserver(
+    (entradas) => {
+      entradas.forEach((entrada) => {
+        if (!entrada.isIntersecting) return;
+        entrada.target.classList.add("is-visible");
+        observer.unobserve(entrada.target);
+      });
+    },
+    {
+      rootMargin: "0px 0px -40px 0px",
+      threshold: 0.1,
+    }
+  );
 
   elementos.forEach((el) => observer.observe(el));
+}
+
+(function inicializarRevelado() {
+  const gate = document.getElementById("gate");
+  if (!gate || getComputedStyle(gate).display === "none") {
+    activarReveladoScroll();
+  }
 })();
 
 /* -----------------------------------------------------------
    2. FONDO AMBIENTAL — pétalos y destellos sutiles
    ----------------------------------------------------------- */
 (function inicializarFondoAmbiental() {
-  if (prefiereMovimientoReducido) return;
 
   const canvas = document.getElementById("ambient-canvas");
   const wrapper = document.querySelector(".site-wrapper");
@@ -333,50 +342,24 @@ const sonidoApertura = (() => {
     fuente.stop(inicio + duracion + 0.1);
   }
 
-  // Sello de cera que se rompe: chasquido seco + golpe grave corto
-  function golpeSello(inicio) {
-    const chasquido = ctx.createBufferSource();
-    chasquido.buffer = crearRuido(0.1);
+  // Despegue sutil del papel/sello: crujido orgánico muy suave y natural (sin tonos senoidales)
+  function crujidoPapel(inicio) {
+    const fuente = ctx.createBufferSource();
+    fuente.buffer = crearRuido(0.08);
     const filtro = ctx.createBiquadFilter();
-    filtro.type = "highpass";
-    filtro.frequency.value = 1600;
-    const gChasquido = ctx.createGain();
-    gChasquido.gain.setValueAtTime(0.38, inicio);
-    gChasquido.gain.exponentialRampToValueAtTime(0.0001, inicio + 0.07);
-    chasquido.connect(filtro);
-    filtro.connect(gChasquido);
-    gChasquido.connect(salida);
-    chasquido.start(inicio);
-    chasquido.stop(inicio + 0.1);
+    filtro.type = "bandpass";
+    filtro.frequency.value = 2400;
+    filtro.Q.value = 1.2;
 
-    const osc = ctx.createOscillator();
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(190, inicio);
-    osc.frequency.exponentialRampToValueAtTime(62, inicio + 0.14);
-    const gGolpe = ctx.createGain();
-    gGolpe.gain.setValueAtTime(0.5, inicio);
-    gGolpe.gain.exponentialRampToValueAtTime(0.0001, inicio + 0.2);
-    osc.connect(gGolpe);
-    gGolpe.connect(salida);
-    osc.start(inicio);
-    osc.stop(inicio + 0.24);
-  }
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.22, inicio);
+    g.gain.exponentialRampToValueAtTime(0.0001, inicio + 0.06);
 
-  // Campanilla suave con un parcial una octava arriba
-  function campanilla(frecuencia, inicio, volumen) {
-    [1, 2.01].forEach((multiplo, i) => {
-      const osc = ctx.createOscillator();
-      const ganancia = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.value = frecuencia * multiplo;
-      ganancia.gain.setValueAtTime(0.0001, inicio);
-      ganancia.gain.exponentialRampToValueAtTime(volumen / (i + 1), inicio + 0.02);
-      ganancia.gain.exponentialRampToValueAtTime(0.0001, inicio + 2.4);
-      osc.connect(ganancia);
-      ganancia.connect(salida);
-      osc.start(inicio);
-      osc.stop(inicio + 2.5);
-    });
+    fuente.connect(filtro);
+    filtro.connect(g);
+    g.connect(salida);
+    fuente.start(inicio);
+    fuente.stop(inicio + 0.08);
   }
 
   async function reproducir() {
@@ -389,19 +372,15 @@ const sonidoApertura = (() => {
     await ctx.resume();
 
     const t = ctx.currentTime + 0.04;
-    golpeSello(t);                                      // sello se rompe
-    roce(t + 0.15, 0.70, 1400, 3600, 0.28);             // solapa que se abre
-    roce(t + 0.45, 1.1, 2800, 1200, 0.20, 0.7);        // carta / hoja que sube
-    campanilla(1046.5, t + 1.10, 0.08);                 // Do
-    campanilla(1318.5, t + 1.25, 0.07);                 // Mi
-    campanilla(1568.0, t + 1.40, 0.07);                 // Sol
-    campanilla(2093.0, t + 1.55, 0.05);                 // Do agudo
-    roce(t + 2.40, 0.8, 650, 180, 0.12, 0.5);           // portal que se desvanece
+    crujidoPapel(t);                                    // despegue inicial
+    roce(t + 0.06, 0.45, 1200, 3000, 0.22, 0.6);        // solapa abriéndose
+    roce(t + 0.32, 0.85, 2200, 950, 0.25, 0.75);        // hoja de papel deslizándose
+    roce(t + 0.42, 0.65, 750, 1500, 0.12, 0.5);         // textura complementaria de papel
 
     window.setTimeout(() => {
       if (ctx) ctx.close().catch(() => {});
       ctx = null;
-    }, 4000);
+    }, 2200);
   }
 
   return { reproducir };
@@ -487,6 +466,7 @@ function setMusicaSilenciada(valor) {
     setTimeout(() => {
       gate.classList.add("gate--closing");
       document.body.classList.add("site-opened");
+      activarReveladoScroll();
       const esperaOculto = 900;
       setTimeout(() => {
         gate.style.display = "none";
