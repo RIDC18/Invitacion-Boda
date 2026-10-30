@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20261030_1330">
+<link rel="stylesheet" href="style.css?v=20261030_1340">
 
 <!-- Definida aquí (no en app.js) para que esté disponible apenas el
      navegador intenta cargar las fotos de la galería -->
@@ -619,10 +619,12 @@
        CONFIRMACIÓN DE ASISTENCIA
        ======================================================= -->
   <section class="section-pad rsvp-section" data-aos="fade-up">
-    <p class="eyebrow">RSVP</p>
-    <h2 class="section-title">Confirmar Asistencia</h2>
+    <h2 class="section-title">¿Nos acompañás?</h2>
 
     <div class="rsvp-card">
+      <p class="rsvp-lead">Esperamos de corazón poder celebrar este día junto a vos.</p>
+      <p class="rsvp-deadline">Por favor, confirmá tu asistencia antes del <strong>1 de Noviembre de 2026</strong></p>
+
       <form id="rsvp-form" autocomplete="off">
         <div class="field">
           <label for="nombre">Nombre</label>
@@ -634,12 +636,11 @@
         </div>
 
         <div class="field">
-          <label>¿Asistirás a nuestra boda?</label>
           <div class="pill-options">
-            <input type="radio" id="asis-si" name="asistencia" value="Sí asistiré" checked>
-            <label for="asis-si">Sí asistiré</label>
-            <input type="radio" id="asis-no" name="asistencia" value="No podré asistir">
-            <label for="asis-no">No podré asistir</label>
+            <input type="radio" id="asis-si" name="asistencia" value="Sí, ¡allí estaré!" checked>
+            <label for="asis-si">Sí, ¡allí estaré!</label>
+            <input type="radio" id="asis-no" name="asistencia" value="No podré acompañarlos">
+            <label for="asis-no">No podré acompañarlos</label>
           </div>
         </div>
 
@@ -648,8 +649,8 @@
 
       <div class="rsvp-state" id="rsvp-success">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="9.5" pathLength="1"/><path d="M8 12.5 L11 15.5 L16.5 9" pathLength="1"/></svg>
-        <h3>¡Gracias por confirmar!</h3>
-        <p>Hemos recibido tu respuesta con mucho cariño.</p>
+        <h3 id="rsvp-success-title">¡Gracias por confirmar!</h3>
+        <p id="rsvp-success-text">Nos hace muy felices saber que serás parte de nuestro gran día.</p>
       </div>
 
       <div class="rsvp-state" id="rsvp-error">
@@ -681,6 +682,6 @@
   </svg>
 </button>
 
-<script src="app.js?v=20261030_1330"></script>
+<script src="app.js?v=20261030_1340"></script>
 </body>
 </html>

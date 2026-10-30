@@ -704,7 +704,21 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
         mode: esAppsScript ? "no-cors" : "cors",
       });
 
+      function actualizarMensajeExito() {
+        const asisVal = datos.get("asistencia");
+        const successTitle = document.getElementById("rsvp-success-title");
+        const successText = document.getElementById("rsvp-success-text");
+        if (asisVal === "No podré acompañarlos") {
+          if (successTitle) successTitle.textContent = "¡Gracias por avisarnos!";
+          if (successText) successText.textContent = "Lamentamos que no puedas acompañarnos, ¡te tendremos presente en nuestro gran día!";
+        } else {
+          if (successTitle) successTitle.textContent = "¡Gracias por confirmar!";
+          if (successText) successText.textContent = "Nos hace muy felices saber que serás parte de nuestro gran día.";
+        }
+      }
+
       if (esAppsScript) {
+        actualizarMensajeExito();
         mostrarEstado(estadoExito);
         return;
       }
@@ -716,6 +730,7 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
         throw new Error(resultado.mensaje || "Apps Script devolvió error");
       }
 
+      actualizarMensajeExito();
       mostrarEstado(estadoExito);
     } catch (error) {
       console.error("Error enviando RSVP:", error);

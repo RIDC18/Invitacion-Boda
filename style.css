@@ -2179,6 +2179,32 @@ body.no-scroll {
   background: linear-gradient(90deg, var(--salvia-muyclaro), var(--dorado), var(--bosque));
 }
 
+.rsvp-lead {
+  font-family: var(--f-serif);
+  font-style: normal;
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--tinta);
+  text-align: center;
+  margin: 0 auto;
+}
+
+.rsvp-deadline {
+  font-family: var(--f-serif);
+  font-style: italic;
+  font-size: 17.5px;
+  line-height: 1.5;
+  color: var(--bosque);
+  text-align: center;
+  margin: 10px auto 26px;
+}
+
+.rsvp-deadline strong {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--tinta);
+}
+
 .field {
   margin-bottom: 20px;
 }
