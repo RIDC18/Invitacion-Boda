@@ -300,87 +300,21 @@ function aparecerVolumen(audio, objetivo, ms) {
 
 /* -----------------------------------------------------------
    SONIDO DE APERTURA DEL SOBRE
-   Sintetizado con Web Audio (no necesita archivos de audio):
-   chasquido del sello de cera, roce del papel al abrirse,
-   carta deslizándose, campanillas suaves y un leve "whoosh"
-   cuando el portal se desvanece. Sincronizado con las
-   animaciones del sobre en style.css.
+   Efecto de carta / baraja (estilo ASMR, nítido y sin fuzz)
    ----------------------------------------------------------- */
 const sonidoApertura = (() => {
-  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-  let ctx = null;
-  let salida = null;
-
-  function crearRuido(duracion) {
-    const largo = Math.max(1, Math.floor(ctx.sampleRate * duracion));
-    const buffer = ctx.createBuffer(1, largo, ctx.sampleRate);
-    const datos = buffer.getChannelData(0);
-    for (let i = 0; i < largo; i++) datos[i] = Math.random() * 2 - 1;
-    return buffer;
-  }
-
-  // Roce de papel: ruido filtrado cuyo timbre "barre" de una frecuencia a otra
-  function roce(inicio, duracion, desde, hasta, volumen, q = 0.9) {
-    const fuente = ctx.createBufferSource();
-    fuente.buffer = crearRuido(duracion + 0.1);
-
-    const filtro = ctx.createBiquadFilter();
-    filtro.type = "bandpass";
-    filtro.Q.value = q;
-    filtro.frequency.setValueAtTime(desde, inicio);
-    filtro.frequency.exponentialRampToValueAtTime(hasta, inicio + duracion);
-
-    const ganancia = ctx.createGain();
-    ganancia.gain.setValueAtTime(0.0001, inicio);
-    ganancia.gain.exponentialRampToValueAtTime(volumen, inicio + duracion * 0.3);
-    ganancia.gain.exponentialRampToValueAtTime(0.0001, inicio + duracion);
-
-    fuente.connect(filtro);
-    filtro.connect(ganancia);
-    ganancia.connect(salida);
-    fuente.start(inicio);
-    fuente.stop(inicio + duracion + 0.1);
-  }
-
-  // Despegue sutil del papel/sello: crujido orgánico muy suave y natural (sin tonos senoidales)
-  function crujidoPapel(inicio) {
-    const fuente = ctx.createBufferSource();
-    fuente.buffer = crearRuido(0.08);
-    const filtro = ctx.createBiquadFilter();
-    filtro.type = "bandpass";
-    filtro.frequency.value = 2400;
-    filtro.Q.value = 1.2;
-
-    const g = ctx.createGain();
-    g.gain.setValueAtTime(0.22, inicio);
-    g.gain.exponentialRampToValueAtTime(0.0001, inicio + 0.06);
-
-    fuente.connect(filtro);
-    filtro.connect(g);
-    g.connect(salida);
-    fuente.start(inicio);
-    fuente.stop(inicio + 0.08);
-  }
-
   async function reproducir() {
-    if (!AudioContextClass || musicaSilenciada) return;
+    if (musicaSilenciada) return;
+    const sfx = document.getElementById("sfx-carta");
+    if (!sfx) return;
 
-    ctx = new AudioContextClass();
-    salida = ctx.createGain();
-    salida.gain.value = 0.9;
-    salida.connect(ctx.destination);
-    await ctx.resume();
-
-    const t = ctx.currentTime + 0.04;
-    crujidoPapel(t);                                    // despegue inicial
-    roce(t + 0.06, 0.45, 1200, 3000, 0.22, 0.6);        // solapa abriéndose
-    roce(t + 0.32, 0.85, 2200, 950, 0.25, 0.75);        // hoja de papel deslizándose
-    roce(t + 0.42, 0.65, 750, 1500, 0.12, 0.5);         // textura complementaria de papel
-
-    window.setTimeout(() => {
-      if (ctx) ctx.close().catch(() => {});
-      ctx = null;
-    }, 2200);
+    try {
+      sfx.currentTime = 0;
+      sfx.volume = 0.55;
+      await sfx.play();
+    } catch {
+      // Ignorar si el navegador bloquea audio antes de interacción
+    }
   }
 
   return { reproducir };

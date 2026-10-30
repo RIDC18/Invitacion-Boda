@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20261030_0115">
+<link rel="stylesheet" href="style.css?v=20261030_0130">
 
 <!-- Definida aquí (no en app.js) para que esté disponible apenas el
      navegador intenta cargar las fotos de la galería -->
@@ -281,6 +281,12 @@
       </div>
     </div>
   </div>
+
+  <!-- Efecto de sonido al abrir la carta (sonido sutil de naipe/baraja) -->
+  <audio id="sfx-carta" preload="auto">
+    <source src="audio/cardFan2.ogg" type="audio/ogg">
+    <source src="audio/carta-baraja-clean.wav" type="audio/wav">
+  </audio>
 
   <!-- Música opcional: coloca el archivo legalmente en /audio con este nombre -->
   <audio id="bg-music" preload="none">
@@ -677,6 +683,6 @@
   </svg>
 </button>
 
-<script src="app.js?v=20261030_0115"></script>
+<script src="app.js?v=20261030_0130"></script>
 </body>
 </html>

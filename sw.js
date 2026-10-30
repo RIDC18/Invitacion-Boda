@@ -1,10 +1,12 @@
-const CACHE_NAME = "boda-diego-liz-v39";
+const CACHE_NAME = "boda-diego-liz-v40";
 const CORE_ASSETS = [
   "/",
   "/index.html",
   "/style.css",
   "/app.js",
   "/audio/photograph-ed-sheeran.mp3",
+  "/audio/cardFan2.ogg",
+  "/audio/carta-baraja-clean.wav",
 ];
 
 self.addEventListener("install", (event) => {
