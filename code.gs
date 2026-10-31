@@ -104,32 +104,42 @@ function configurarHoja() {
   }
   hojaEnvios.setColumnWidth(7, 290);
 
-  // Colocar formulas automaticas para las primeras 80 filas
-  const cantFilas = 80;
-  for (let r = 2; r <= cantFilas + 1; r++) {
+  // Colocar formulas automaticas para las primeras 150 filas
+  const cantFilas = 150;
+  for (let r = 2; r <= cantFilas; r++) {
+    const cleanPhone = `SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(TO_TEXT(B${r});"+";"");"-";"");" ";"");"(";"");")";"")`;
+    const intlPhone =
+      `IF(LEFT(${cleanPhone};2)="09"; "595" & MID(${cleanPhone};2;20); ` +
+      `IF(AND(LEFT(${cleanPhone};1)="9"; LEN(${cleanPhone})=9); "595" & ${cleanPhone}; ${cleanPhone}))`;
+
+    const textoLugares =
+      `IF(OR(ISBLANK(C${r}); C${r}<=1); ` +
+      `"Hemos reservado *1 lugar* con mucho cariño para vos."; ` +
+      `"Hemos reservado *" & C${r} & " lugares* con mucho cariño para vos y tu familia.")`;
+
     // Columna D: Enlace de WhatsApp con el texto carinoso formateado
     const formulaWhatsApp =
-      `=IF(OR(ISBLANK(A${r}), ISBLANK(B${r})), "", HYPERLINK("https://wa.me/" & ` +
-      `SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(TO_TEXT(B${r}),"+",""),"-","")," ",""),"(",""),")","") & ` +
+      `=IF(OR(ISBLANK(A${r}); ISBLANK(B${r})); ""; HYPERLINK("https://wa.me/" & ${intlPhone} & ` +
       `"?text=" & ENCODEURL(` +
-      `"¡Hola " & A${r} & "! ✨🤍" & CHAR(10) & CHAR(10) & ` +
-      `"Con mucha alegría y emoción queremos invitarte a celebrar nuestra boda. Dios y la vida nos han bendecido con este amor, y será un honor inmenso compartir este día tan especial con vos." & CHAR(10) & CHAR(10) & ` +
-      `IF(C${r}=1, "Hemos reservado 1 lugar con mucho cariño para vos.", "Hemos reservado " & C${r} & " lugares con mucho cariño para tu familia.") & CHAR(10) & CHAR(10) & ` +
+      `"¡Hola *" & TRIM(A${r}) & "*! ✨🤍" & CHAR(10) & CHAR(10) & ` +
+      `"Con mucha alegría e ilusión queremos invitarte a celebrar nuestra boda. Dios y la vida nos han bendecido con este amor, y será un honor inmenso compartir este día tan especial con vos." & CHAR(10) & CHAR(10) & ` +
+      `${textoLugares} & CHAR(10) & CHAR(10) & ` +
       `"Te compartimos nuestra invitación digital con todos los detalles de la ceremonia, horario y ubicación:" & CHAR(10) & ` +
       `$G$2 & CHAR(10) & CHAR(10) & ` +
-      `"Por favor, confirmá tu asistencia antes del 1 de Noviembre desde la misma página." & CHAR(10) & CHAR(10) & ` +
+      `"Por favor, confirmá tu asistencia desde la misma página web." & CHAR(10) & CHAR(10) & ` +
       `"¡Te esperamos con los brazos abiertos para celebrar juntos! 🥂💍" & CHAR(10) & CHAR(10) & ` +
       `"Con todo nuestro cariño," & CHAR(10) & ` +
-      `"Diego & Liz"` +
-      `), "📲 Enviar por WhatsApp"))`;
+      `"*Diego & Liz*"` +
+      `); "📲 Enviar por WhatsApp"))`;
 
     hojaEnvios.getRange(r, 4).setFormula(formulaWhatsApp);
 
     // Columna E: Estado de Confirmacion en tiempo real (busca en RSVP)
     const formulaEstado =
-      `=IF(ISBLANK(A${r}), "", ` +
-      `IFERROR(VLOOKUP(A${r}, RSVP!A:C, 3, FALSE), ` +
-      `IFERROR(VLOOKUP(TRIM(RIGHT(SUBSTITUTE(A${r}," ",REPT(" ",50)),50)), RSVP!B:C, 2, FALSE), "⏳ Pendiente")))`;
+      `=IF(ISBLANK(A${r}); ""; ` +
+      `IFERROR(VLOOKUP(TRIM(A${r}); RSVP!A:C; 3; FALSE); ` +
+      `IFERROR(VLOOKUP(TRIM(LEFT(SUBSTITUTE(TRIM(A${r});" ";REPT(" ";50));50)); RSVP!A:C; 3; FALSE); ` +
+      `IFERROR(VLOOKUP(TRIM(RIGHT(SUBSTITUTE(TRIM(A${r});" ";REPT(" ";50));50)); RSVP!B:C; 2; FALSE); "⏳ Pendiente"))))`;
 
     hojaEnvios.getRange(r, 5).setFormula(formulaEstado);
   }
