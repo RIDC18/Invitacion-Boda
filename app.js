@@ -10,7 +10,7 @@
 const FECHA_BODA = new Date("2026-11-21T20:30:00-03:00");
 
 // Pega aquí la URL de tu Web App de Google Apps Script (ver code.gs)
-const RSVP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzmP-WMebJUSMj0Ls7dV5T5eXtvmS92vBPTW_sgg1CcmtJF8dlIYYESwun8Gmxc-20VEA/exec";
+const RSVP_SCRIPT_URL = "https://script.google.com/macros/s/AKfycby1GOQyN8HnjQQAH1wpQYFE_T1ETJxu05VBxh64yq54BQbKZ-32sQMmsRYTIlOXLJO_/exec";
 
 const prefiereMovimientoReducido =
   window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
