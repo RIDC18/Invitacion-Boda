@@ -707,6 +707,7 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   const estadoExito = document.getElementById("rsvp-success");
   const estadoError = document.getElementById("rsvp-error");
   const rsvpIntro = document.getElementById("rsvp-intro");
+  const rsvpTitle = document.querySelector(".rsvp-section .section-title");
   const rsvpNote = document.querySelector(".rsvp-note");
   const reintentar = document.getElementById("rsvp-retry");
   const campoNombre = document.getElementById("nombre");
@@ -760,9 +761,11 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
     estadoError.classList.remove("is-visible");
 
     if (nodo === estadoExito) {
+      if (rsvpTitle) rsvpTitle.style.display = "none";
       if (rsvpIntro) rsvpIntro.style.display = "none";
       if (rsvpNote) rsvpNote.style.display = "none";
     } else {
+      if (rsvpTitle) rsvpTitle.style.display = "";
       if (rsvpIntro) rsvpIntro.style.display = "";
       if (rsvpNote) rsvpNote.style.display = "";
     }
@@ -847,6 +850,7 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   reintentar?.addEventListener("click", () => {
     estadoError.classList.remove("is-visible");
     form.style.display = "block";
+    if (rsvpTitle) rsvpTitle.style.display = "";
     if (rsvpIntro) rsvpIntro.style.display = "";
     if (rsvpNote) rsvpNote.style.display = "";
   });
