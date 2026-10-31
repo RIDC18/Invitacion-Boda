@@ -650,37 +650,36 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
 })();
 
 /* -----------------------------------------------------------
-   8. LIGHTBOX — ver foto en grande con navegación
-   (la función imgFallback() para fotos faltantes vive en el
-   <head> de index.html, así está lista antes de que carguen las fotos)
+   8. VISOR DE FOTOS — ampliar foto con un clic
    ----------------------------------------------------------- */
 (function inicializarLightbox() {
   const lightbox = document.getElementById("lightbox");
   const lightboxImg = document.getElementById("lightbox-img");
   const cerrar = document.getElementById("lightbox-close");
-  const btnPrev = document.getElementById("lightbox-prev");
-  const btnNext = document.getElementById("lightbox-next");
   const galeria = document.getElementById("gallery-grid");
 
   const PIXEL_TRANSPARENTE =
     "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
-  if (!lightbox || !lightboxImg || !galeria) return;
+  if (!lightbox || !lightboxImg) return;
 
-  function obtenerFotos() {
-    return Array.from(galeria.querySelectorAll(".gallery__item img"));
+  function abrirFoto(src, alt) {
+    if (!src) return;
+    lightboxImg.src = src;
+    lightboxImg.alt = alt || "Foto ampliada de Diego & Liz";
+    lightbox.classList.add("is-active");
+    document.body.classList.add("lightbox-open");
   }
 
-  let indiceActual = 0;
-
-  function mostrarFoto(indice) {
-    const fotos = obtenerFotos();
-    if (!fotos.length) return;
-    indiceActual = (indice + fotos.length) % fotos.length;
-    const img = fotos[indiceActual];
-    lightboxImg.src = img.src;
-    lightboxImg.alt = img.alt || "Foto de Diego & Liz";
-    lightbox.classList.add("is-active");
+  function cerrarLightbox() {
+    lightbox.classList.remove("is-active");
+    document.body.classList.remove("lightbox-open");
+    setTimeout(() => {
+      if (!lightbox.classList.contains("is-active")) {
+        lightboxImg.src = PIXEL_TRANSPARENTE;
+        lightboxImg.alt = "";
+      }
+    }, 280);
   }
 
   lightboxImg.addEventListener("error", () => {
@@ -689,80 +688,38 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
     }
   });
 
-  galeria.addEventListener("click", (e) => {
+  // Al hacer clic en cualquier foto de la galería se agranda
+  galeria?.addEventListener("click", (e) => {
     const img = e.target.closest("img");
     if (!img) return;
-    const fotos = obtenerFotos();
-    const idx = fotos.indexOf(img);
-    mostrarFoto(idx >= 0 ? idx : 0);
+    abrirFoto(img.currentSrc || img.src, img.alt);
   });
 
-  function cerrarLightbox() {
-    lightbox.classList.remove("is-active");
-    setTimeout(() => {
-      if (!lightbox.classList.contains("is-active")) {
-        lightboxImg.src = PIXEL_TRANSPARENTE;
-        lightboxImg.alt = "";
-      }
-    }, 300);
+  // También se puede ampliar la foto de bienvenida si se desea
+  const fotoBienvenida = document.querySelector(".welcome__photo img");
+  if (fotoBienvenida) {
+    fotoBienvenida.style.cursor = "zoom-in";
+    fotoBienvenida.addEventListener("click", () => {
+      abrirFoto(fotoBienvenida.currentSrc || fotoBienvenida.src, fotoBienvenida.alt);
+    });
   }
+
+  // Al hacer clic en cualquier parte se cierra
+  lightbox.addEventListener("click", () => {
+    cerrarLightbox();
+  });
 
   cerrar?.addEventListener("click", (e) => {
     e.stopPropagation();
     cerrarLightbox();
   });
 
-  btnPrev?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    mostrarFoto(indiceActual - 1);
-  });
-
-  btnNext?.addEventListener("click", (e) => {
-    e.stopPropagation();
-    mostrarFoto(indiceActual + 1);
-  });
-
-  lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox || e.target.classList.contains("lightbox__content")) {
-      cerrarLightbox();
-    }
-  });
-
   document.addEventListener("keydown", (e) => {
     if (!lightbox.classList.contains("is-active")) return;
     if (e.key === "Escape") {
       cerrarLightbox();
-    } else if (e.key === "ArrowLeft") {
-      mostrarFoto(indiceActual - 1);
-    } else if (e.key === "ArrowRight") {
-      mostrarFoto(indiceActual + 1);
     }
   });
-
-  // Soporte de gesto de deslizamiento (swipe) táctil en móviles
-  let touchInicioX = 0;
-  let touchInicioY = 0;
-  lightbox.addEventListener("touchstart", (e) => {
-    if (e.touches.length === 1) {
-      touchInicioX = e.touches[0].clientX;
-      touchInicioY = e.touches[0].clientY;
-    }
-  }, { passive: true });
-
-  lightbox.addEventListener("touchend", (e) => {
-    if (e.changedTouches.length === 1) {
-      const deltaX = e.changedTouches[0].clientX - touchInicioX;
-      const deltaY = e.changedTouches[0].clientY - touchInicioY;
-      // Solo actuar si es un deslizamiento horizontal marcado
-      if (Math.abs(deltaX) > 40 && Math.abs(deltaX) > Math.abs(deltaY) * 1.5) {
-        if (deltaX > 0) {
-          mostrarFoto(indiceActual - 1);
-        } else {
-          mostrarFoto(indiceActual + 1);
-        }
-      }
-    }
-  }, { passive: true });
 })();
 
 /* -----------------------------------------------------------
