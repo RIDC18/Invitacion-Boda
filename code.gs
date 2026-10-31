@@ -21,9 +21,14 @@
  *   5. Copia la URL que termina en "/exec" y pegala en app.js (const RSVP_SCRIPT_URL).
  */
 
+const SPREADSHEET_ID = "18OaB28TvK-y3j8D5SBJfmrJUcC-5lxMGJ_Rbkgnx5OQ";
 const NOMBRE_HOJA_RSVP = "RSVP";
 const NOMBRE_HOJA_ENVIOS = "Invitaciones y WhatsApp";
 const URL_BASE_DEFAULT = "https://boda-diego-liz-2026.web.app";
+
+function obtenerLibro() {
+  return SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
+}
 
 const ENCABEZADOS_RSVP = ["Nombre", "Apellido", "Asistencia"];
 
@@ -37,7 +42,7 @@ const ENCABEZADOS_ENVIOS = [
 
 /** Crea y formatea ambas pestanas con sus formulas y filtros listos. */
 function configurarHoja() {
-  const libro = SpreadsheetApp.getActiveSpreadsheet();
+  const libro = obtenerLibro();
 
   // 1. Configurar Pestana RSVP (lo mas limpia posible: Nombre | Apellido | Asistencia)
   let hojaRsvp = libro.getSheetByName(NOMBRE_HOJA_RSVP);
@@ -184,7 +189,7 @@ function doPost(e) {
   try {
     lock.waitLock(10000);
 
-    const libro = SpreadsheetApp.getActiveSpreadsheet();
+    const libro = obtenerLibro();
     let hoja = libro.getSheetByName(NOMBRE_HOJA_RSVP);
     if (!hoja) {
       configurarHoja();
