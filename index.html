@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20261031_1712">
+<link rel="stylesheet" href="style.css?v=20261031_1755">
 
 <!-- Definida aquí (no en app.js) para que esté disponible apenas el
      navegador intenta cargar las fotos de la galería -->
@@ -673,12 +673,8 @@
 
       <form id="rsvp-form" autocomplete="off">
         <div class="field">
-          <label for="nombre">Nombre</label>
-          <input type="text" id="nombre" name="nombre" autocomplete="given-name" maxlength="40" pattern="[\p{L} ]{2,40}" title="Usa solo letras, espacios y acentos." required>
-        </div>
-        <div class="field">
-          <label for="apellido">Apellido</label>
-          <input type="text" id="apellido" name="apellido" autocomplete="family-name" maxlength="40" pattern="[\p{L} ]{2,40}" title="Usa solo letras, espacios y acentos." required>
+          <label for="nombre">Nombre y apellido</label>
+          <input type="text" id="nombre" name="nombre" autocomplete="name" placeholder="Ej. Juan Pérez" maxlength="70" pattern="[\p{L} ]{4,70}" title="Ingresá tu nombre y apellido usando solo letras y espacios (sin números ni símbolos)." required>
         </div>
 
         <div class="field">
@@ -728,6 +724,6 @@
   </svg>
 </button>
 
-<script src="app.js?v=20261031_1712"></script>
+<script src="app.js?v=20261031_1755"></script>
 </body>
 </html>

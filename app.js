@@ -710,30 +710,50 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   const rsvpNote = document.querySelector(".rsvp-note");
   const reintentar = document.getElementById("rsvp-retry");
   const campoNombre = document.getElementById("nombre");
-  const campoApellido = document.getElementById("apellido");
-  const patronTexto = /^\p{L}+(?: \p{L}+)*$/u;
+  const patronNombreCompleto = /^\p{L}{2,}(?: \p{L}{2,})+$/u;
 
   if (!form) return;
 
   function normalizarTexto(valor) {
-    return valor.trim().replace(/\s+/g, " ");
+    return String(valor || "")
+      .replace(/[^\p{L} ]/gu, "")
+      .trim()
+      .replace(/\s+/g, " ");
   }
 
-  function validarCampoTexto(campo) {
+  function formatearNombrePropio(valor) {
+    return normalizarTexto(valor)
+      .toLowerCase()
+      .replace(/(^|\s)\p{L}/gu, (letra) => letra.toUpperCase());
+  }
+
+  function validarCampoNombre(campo) {
     if (!campo) return true;
     const valor = normalizarTexto(campo.value);
-    const valido = valor.length >= 2 && valor.length <= 40 && patronTexto.test(valor);
+    const valido =
+      valor.length >= 4 &&
+      valor.length <= 70 &&
+      patronNombreCompleto.test(valor);
     campo.setCustomValidity(
-      valido ? "" : "Usa solo letras, espacios y acentos. No uses números ni símbolos."
+      valido
+        ? ""
+        : "Por favor, ingresá tu nombre y apellido completos usando solo letras y espacios (sin números ni signos)."
     );
     return valido;
   }
 
-  [campoNombre, campoApellido].forEach((campo) => {
-    campo?.addEventListener("input", () => {
-      campo.value = campo.value.replace(/[^\p{L} ]/gu, "");
-      validarCampoTexto(campo);
-    });
+  campoNombre?.addEventListener("input", () => {
+    campoNombre.value = campoNombre.value
+      .replace(/[^\p{L} ]/gu, "")
+      .replace(/\s{2,}/g, " ");
+    validarCampoNombre(campoNombre);
+  });
+
+  campoNombre?.addEventListener("blur", () => {
+    if (campoNombre.value.trim()) {
+      campoNombre.value = formatearNombrePropio(campoNombre.value);
+      validarCampoNombre(campoNombre);
+    }
   });
 
   function mostrarEstado(nodo) {
@@ -755,15 +775,13 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const nombreValido = validarCampoTexto(campoNombre);
-    const apellidoValido = validarCampoTexto(campoApellido);
-    if (!nombreValido || !apellidoValido) {
+    const nombreValido = validarCampoNombre(campoNombre);
+    if (!nombreValido) {
       form.reportValidity();
       return;
     }
 
-    campoNombre.value = normalizarTexto(campoNombre.value);
-    campoApellido.value = normalizarTexto(campoApellido.value);
+    campoNombre.value = formatearNombrePropio(campoNombre.value);
 
     if (!RSVP_SCRIPT_URL || RSVP_SCRIPT_URL.includes("PEGA_AQUI")) {
       console.warn(
