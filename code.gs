@@ -1,47 +1,15 @@
-// DIEGO & LIZ - SISTEMA RSVP Y GENERADOR DE WHATSAPP
-// Hoja 1 ("Invitaciones y WhatsApp"): Nombre y Apellido | Cantidad de Personas | Teléfono (Opcional) | Enlace para WhatsApp
-// Hoja 2 ("Confirmaciones"): Nombre y Apellido | Asistencia
+// =============================================================================
+// DIEGO & LIZ — SISTEMA DE INVITACIONES Y CONFIRMACIÓN DE ASISTENCIA
+// =============================================================================
+// Hoja 1 ("Invitaciones y WhatsApp"):
+//   Nombre y Apellido | Cantidad de Personas | Teléfono (Opcional) | Enlace para WhatsApp
+//
+// Hoja 2 ("Confirmaciones"):
+//   Nombre y Apellido | Asistencia
+// =============================================================================
 
-const SPREADSHEET_ID = "18OaB28TvK-y3j8D5SBJfmrJUcC-5lxMGJ_Rbkgnx5OQ";
-const NOMBRE_HOJA_ENVIOS = "Invitaciones y WhatsApp";
+const SPREADSHEET_ID = "1ETEM0oO6y_pI50QHHlFamLvkGtVjad6d7ubh384no3g";
 const NOMBRE_HOJA_CONFIRMACIONES = "Confirmaciones";
-const URL_WEB_BODA = "https://boda-diego-liz-2026.web.app";
-
-function formulaWhatsAppFila(f) {
-  const limpio = 'SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(TO_TEXT(C' + f + ');"+";"");"-";"");" ";"");"(";"");")";"")';
-  return (
-    '=IF(OR(ISBLANK(A' + f + '); ISBLANK(B' + f + ')); ""; HYPERLINK(' +
-    'IF(ISBLANK(C' + f + '); "https://api.whatsapp.com/send?text="; "https://wa.me/" & ' +
-    'IF(LEFT(' + limpio + ';2)="09"; "595" & MID(' + limpio + ';2;20); ' +
-    'IF(AND(LEFT(' + limpio + ';1)="9"; LEN(' + limpio + ')=9); "595" & ' + limpio + '; ' + limpio + ')) & "?text=") & ' +
-    'ENCODEURL("¡Hola *" & TRIM(A' + f + ') & "*! ✨🤍" & CHAR(10) & CHAR(10) & ' +
-    '"Con mucha alegría e ilusión queremos invitarte a celebrar nuestra boda. Dios y la vida nos han bendecido con este amor, y será un honor inmenso compartir este día tan especial." & CHAR(10) & CHAR(10) & ' +
-    'IF(VALUE(B' + f + ')=1; "Hemos reservado *1 lugar* con mucho cariño para vos."; "Hemos reservado *" & TRIM(TO_TEXT(B' + f + ')) & " lugares* con mucho cariño para vos.") & CHAR(10) & CHAR(10) & ' +
-    '"Te compartimos nuestra invitación digital con todos los detalles de la ceremonia, horario y ubicación:" & CHAR(10) & ' +
-    '"' + URL_WEB_BODA + '" & CHAR(10) & CHAR(10) & ' +
-    '"Por favor, confirmá tu asistencia desde la misma página web." & CHAR(10) & CHAR(10) & ' +
-    '"¡Te esperamos con los brazos abiertos para celebrar juntos! 🥂💍" & CHAR(10) & CHAR(10) & ' +
-    '"Con todo nuestro cariño," & CHAR(10) & "*Diego & Liz*"); "📲 Enviar por WhatsApp"))'
-  );
-}
-
-// Si alguien borra una fila entera con Supr y vuelve a cargar datos en A-C, restaura la fórmula en D
-function onEdit(e) {
-  if (!e || !e.range) return;
-  const hoja = e.range.getSheet();
-  if (!hoja || hoja.getName() !== NOMBRE_HOJA_ENVIOS) return;
-
-  const filaInicio = Math.max(2, e.range.getRow());
-  const filaFin = e.range.getLastRow();
-  if (e.range.getColumn() > 4) return;
-
-  for (let f = filaInicio; f <= filaFin; f++) {
-    const celdaD = hoja.getRange(f, 4);
-    if (!celdaD.getFormula()) {
-      celdaD.setFormula(formulaWhatsAppFila(f));
-    }
-  }
-}
 
 function obtenerLibro() {
   return SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -81,10 +49,7 @@ function doPost(e) {
     lock.waitLock(10000);
 
     const libro = obtenerLibro();
-    let hoja =
-      libro.getSheetByName(NOMBRE_HOJA_CONFIRMACIONES) ||
-      libro.getSheetByName("RSVP") ||
-      libro.getSheets()[1];
+    let hoja = libro.getSheetByName(NOMBRE_HOJA_CONFIRMACIONES);
     if (!hoja) {
       hoja = libro.insertSheet(NOMBRE_HOJA_CONFIRMACIONES);
       hoja.getRange(1, 1, 1, 2).setValues([["Nombre y Apellido", "Asistencia"]]);
@@ -143,6 +108,6 @@ function doPost(e) {
 
 function doGet() {
   return ContentService
-    .createTextOutput(JSON.stringify({ estado: "El script de RSVP esta activo." }))
+    .createTextOutput(JSON.stringify({ estado: "El script de Confirmaciones esta activo." }))
     .setMimeType(ContentService.MimeType.JSON);
 }
