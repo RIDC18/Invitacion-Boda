@@ -166,21 +166,16 @@ function activarReveladoScroll() {
 })();
 
 /* -----------------------------------------------------------
-   3. DATOS DE INVITACIÓN PERSONALIZADA (vía ?invitado= y ?cupos= en la URL)
-   Ejemplo: tusitio.com/?invitado=Familia%20Gonz%C3%A1lez&cupos=3
+   3. NOMBRE DEL INVITADO (vía parámetro ?invitado= en la URL)
+   Ejemplo: tusitio.com/?invitado=Familia%20Gonz%C3%A1lez
    ----------------------------------------------------------- */
-const datosInvitacionURL = (() => {
+(function aplicarNombreInvitado() {
   const params = new URLSearchParams(window.location.search);
-  const invitado = (params.get("invitado") || params.get("guest") || "").trim();
-  const cuposRaw = parseInt(params.get("cupos") || params.get("pases") || params.get("lugares") || "0", 10);
-  const cupos = (cuposRaw > 0 && cuposRaw <= 30) ? cuposRaw : (invitado ? 1 : 0);
-
+  const invitado = params.get("invitado") || params.get("guest");
   if (invitado) {
     const nodo = document.getElementById("gate-guest-name");
     if (nodo) nodo.textContent = invitado;
   }
-
-  return { invitado, cupos };
 })();
 
 const musicaSintetica = (() => {
@@ -639,78 +634,12 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   const estadoError = document.getElementById("rsvp-error");
   const rsvpIntro = document.getElementById("rsvp-intro");
   const rsvpNote = document.querySelector(".rsvp-note");
-  const rsvpPasses = document.getElementById("rsvp-passes");
-  const rsvpPassesText = document.getElementById("rsvp-passes-text");
-  const rsvpCuposField = document.getElementById("rsvp-cupos-field");
-  const rsvpCuposSelect = document.getElementById("rsvp-cupos-select");
-  const rsvpCuposAsignados = document.getElementById("rsvp-cupos-asignados");
-  const asisSiLabel = document.getElementById("asis-si-label");
-  const asisNoLabel = document.getElementById("asis-no-label");
-  const asisSiRadio = document.getElementById("asis-si");
-  const asisNoRadio = document.getElementById("asis-no");
   const reintentar = document.getElementById("rsvp-retry");
   const campoNombre = document.getElementById("nombre");
   const campoApellido = document.getElementById("apellido");
   const patronTexto = /^\p{L}+(?: \p{L}+)*$/u;
 
   if (!form) return;
-
-  const { invitado, cupos } = datosInvitacionURL;
-
-  // Si viene invitado en la URL y los campos están vacíos, autocompletar de forma inteligente
-  if (invitado && campoNombre && campoApellido && !campoNombre.value && !campoApellido.value) {
-    const partes = invitado.split(/\s+/);
-    if (partes.length === 1) {
-      campoNombre.value = partes[0];
-    } else if (partes[0].toLowerCase() === "familia") {
-      campoNombre.value = "Familia";
-      campoApellido.value = partes.slice(1).join(" ");
-    } else {
-      campoNombre.value = partes.slice(0, -1).join(" ");
-      campoApellido.value = partes[partes.length - 1];
-    }
-  }
-
-  // Configurar cupos si se pasaron por URL
-  if (cupos > 0) {
-    if (rsvpCuposAsignados) rsvpCuposAsignados.value = String(cupos);
-
-    if (rsvpPasses && rsvpPassesText) {
-      rsvpPasses.style.display = "inline-flex";
-      if (cupos === 1) {
-        rsvpPassesText.innerHTML = "Lugar reservado: <strong>1 persona</strong>";
-      } else {
-        rsvpPassesText.innerHTML = `Lugares reservados: <strong>${cupos} personas</strong>`;
-      }
-    }
-
-    if (cupos > 1) {
-      if (asisSiLabel) asisSiLabel.textContent = "Sí, ¡allí estaremos!";
-      if (asisNoLabel) asisNoLabel.textContent = "No podremos acompañarlos";
-
-      // Llenar selector de personas
-      if (rsvpCuposSelect) {
-        rsvpCuposSelect.innerHTML = "";
-        for (let i = cupos; i >= 1; i--) {
-          const opt = document.createElement("option");
-          opt.value = String(i);
-          opt.textContent = i === 1 ? "1 persona" : `${i} personas`;
-          rsvpCuposSelect.appendChild(opt);
-        }
-        rsvpCuposSelect.value = String(cupos);
-      }
-
-      function actualizarVisibilidadCupos() {
-        if (rsvpCuposField) {
-          rsvpCuposField.style.display = asisSiRadio && asisSiRadio.checked ? "block" : "none";
-        }
-      }
-
-      asisSiRadio?.addEventListener("change", actualizarVisibilidadCupos);
-      asisNoRadio?.addEventListener("change", actualizarVisibilidadCupos);
-      actualizarVisibilidadCupos();
-    }
-  }
 
   function normalizarTexto(valor) {
     return valor.trim().replace(/\s+/g, " ");
@@ -775,16 +704,6 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
 
     const datos = new FormData(form);
 
-    // Asegurar cupos confirmados y asignados consistentes
-    if (asisNoRadio && asisNoRadio.checked) {
-      datos.set("cupos_confirmados", "0");
-    } else if (cupos > 1 && rsvpCuposSelect) {
-      datos.set("cupos_confirmados", rsvpCuposSelect.value);
-    } else {
-      datos.set("cupos_confirmados", String(cupos || 1));
-    }
-    datos.set("cupos_asignados", String(cupos || 1));
-
     try {
       const esAppsScript =
         RSVP_SCRIPT_URL.includes("script.google.com") ||
@@ -798,26 +717,14 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
 
       function actualizarMensajeExito() {
         const asisVal = datos.get("asistencia");
-        const cuposConfirmados = parseInt(datos.get("cupos_confirmados") || "1", 10);
         const successTitle = document.getElementById("rsvp-success-title");
         const successText = document.getElementById("rsvp-success-text");
-
-        if (asisVal === "No podré acompañarlos" || asisVal === "No podremos acompañarlos") {
+        if (asisVal === "No podré acompañarlos") {
           if (successTitle) successTitle.textContent = "¡Gracias por avisarnos!";
-          if (successText) {
-            successText.textContent = cupos > 1
-              ? "Lamentamos que no puedan acompañarnos, ¡los tendremos presentes en nuestro gran día!"
-              : "Lamentamos que no puedas acompañarnos, ¡te tendremos presente en nuestro gran día!";
-          }
+          if (successText) successText.textContent = "Lamentamos que no puedas acompañarnos, ¡te tendremos presente en nuestro gran día!";
         } else {
           if (successTitle) successTitle.textContent = "¡Gracias por confirmar!";
-          if (successText) {
-            if (cuposConfirmados > 1) {
-              successText.textContent = `Nos hace muy felices saber que los ${cuposConfirmados} serán parte de nuestro gran día.`;
-            } else {
-              successText.textContent = "Nos hace muy felices saber que serás parte de nuestro gran día.";
-            }
-          }
+          if (successText) successText.textContent = "Nos hace muy felices saber que serás parte de nuestro gran día.";
         }
       }
 

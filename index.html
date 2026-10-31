@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20261030_2010">
+<link rel="stylesheet" href="style.css?v=20261030_2215">
 
 <!-- Definida aquí (no en app.js) para que esté disponible apenas el
      navegador intenta cargar las fotos de la galería -->
@@ -656,20 +656,9 @@
       <div class="rsvp-intro" id="rsvp-intro">
         <p class="rsvp-lead">Esperamos de corazón poder celebrar este día junto a vos.</p>
         <p class="rsvp-deadline">Por favor, confirmá tu asistencia antes del <strong>1 de Noviembre de 2026</strong></p>
-        <div class="rsvp-passes" id="rsvp-passes" style="display: none;" aria-live="polite">
-          <svg class="rsvp-passes__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-          <span class="rsvp-passes__text" id="rsvp-passes-text">Lugares reservados: <strong>2 personas</strong></span>
-        </div>
       </div>
 
       <form id="rsvp-form" autocomplete="off">
-        <input type="hidden" name="cupos_asignados" id="rsvp-cupos-asignados" value="1">
-
         <div class="field">
           <label for="nombre">Nombre</label>
           <input type="text" id="nombre" name="nombre" autocomplete="given-name" maxlength="40" pattern="[\p{L} ]{2,40}" title="Usa solo letras, espacios y acentos." required>
@@ -682,21 +671,9 @@
         <div class="field">
           <div class="pill-options">
             <input type="radio" id="asis-si" name="asistencia" value="Sí, ¡allí estaré!" checked>
-            <label for="asis-si" id="asis-si-label">Sí, ¡allí estaré!</label>
+            <label for="asis-si">Sí, ¡allí estaré!</label>
             <input type="radio" id="asis-no" name="asistencia" value="No podré acompañarlos">
-            <label for="asis-no" id="asis-no-label">No podré acompañarlos</label>
-          </div>
-        </div>
-
-        <div class="field" id="rsvp-cupos-field" style="display: none;">
-          <label for="rsvp-cupos-select">¿Cuántas personas asistirán?</label>
-          <div class="select-wrapper">
-            <select id="rsvp-cupos-select" name="cupos_confirmados">
-              <!-- Se puebla dinámicamente según los cupos asignados -->
-            </select>
-            <svg class="select-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="6 9 12 15 18 9"/>
-            </svg>
+            <label for="asis-no">No podré acompañarlos</label>
           </div>
         </div>
 
@@ -738,6 +715,6 @@
   </svg>
 </button>
 
-<script src="app.js?v=20261030_2010"></script>
+<script src="app.js?v=20261030_2215"></script>
 </body>
 </html>

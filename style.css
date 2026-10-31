@@ -2281,35 +2281,6 @@ body.no-scroll {
   color: var(--tinta);
 }
 
-.rsvp-passes {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin: -10px auto 26px;
-  padding: 8px 18px;
-  background: rgba(221, 230, 218, 0.45);
-  border: 1px solid rgba(142, 166, 140, 0.38);
-  border-radius: 30px;
-  color: var(--bosque);
-  font-family: var(--f-sans);
-  font-size: 13px;
-  letter-spacing: 0.3px;
-  max-width: fit-content;
-}
-
-.rsvp-passes__icon {
-  width: 17px;
-  height: 17px;
-  color: var(--dorado);
-  flex-shrink: 0;
-}
-
-.rsvp-passes strong {
-  font-weight: 600;
-  color: var(--bosque);
-}
-
 .field {
   margin-bottom: 20px;
 }
@@ -2339,42 +2310,6 @@ body.no-scroll {
 .field input[type="text"]:focus {
   border-color: var(--salvia);
   outline: none;
-}
-
-.select-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.select-wrapper select {
-  width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  border: 1.4px solid var(--salvia-muyclaro);
-  border-radius: 10px;
-  padding: 13px 40px 13px 14px;
-  font-family: var(--f-body);
-  font-size: 14.5px;
-  color: var(--tinta);
-  background: var(--crema);
-  transition: border-color 220ms ease;
-  cursor: pointer;
-}
-
-.select-wrapper select:focus {
-  border-color: var(--salvia);
-  outline: none;
-}
-
-.select-wrapper .select-arrow {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  color: var(--salvia);
-  pointer-events: none;
 }
 
 .pill-options {

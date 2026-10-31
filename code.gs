@@ -1,16 +1,14 @@
 /**
- * DIEGO & LIZ - SISTEMA RSVP Y GENERADOR DE INVITACIONES
+ * DIEGO & LIZ - SISTEMA RSVP Y GENERADOR DE WHATSAPP
  * =======================================================
- * Este script administra la recepcion de confirmaciones desde la web
- * y el panel de generacion de invitaciones personalizadas con envio
- * directo a WhatsApp para la novia.
+ * Este script administra:
+ *   1. La recepcion de confirmaciones limpias desde la web (pestana "RSVP").
+ *      Columnas: Nombre | Apellido | Asistencia
  *
- * Pestanas configuradas:
- *   1. "RSVP": Respuestas recibidas en tiempo real.
- *      Columnas: Nombre | Apellido | Asistencia | Lugares Asignados | Lugares Confirmados
- *
- *   2. "Generador de Invitaciones": Panel de la novia.
- *      Columnas: Nombre / Familia | Telefono | Lugares | Enlace Web | Enviar WhatsApp | Estado RSVP | Confirmados
+ *   2. El panel de la novia (pestana "Invitaciones y WhatsApp").
+ *      La novia anota el nombre, telefono y cantidad de lugares reservados.
+ *      La hoja genera un enlace "📲 Enviar por WhatsApp" con un texto calido,
+ *      elegante y emotivo listo para enviar por WhatsApp.
  *
  * INSTRUCCIONES:
  *   1. Abre tu hoja en Google Sheets.
@@ -24,32 +22,24 @@
  */
 
 const NOMBRE_HOJA_RSVP = "RSVP";
-const NOMBRE_HOJA_GENERADOR = "Generador de Invitaciones";
+const NOMBRE_HOJA_ENVIOS = "Invitaciones y WhatsApp";
 const URL_BASE_DEFAULT = "https://boda-diego-liz-2026.web.app";
 
-const ENCABEZADOS_RSVP = [
-  "Nombre",
-  "Apellido",
-  "Asistencia",
-  "Lugares Asignados",
-  "Lugares Confirmados"
-];
+const ENCABEZADOS_RSVP = ["Nombre", "Apellido", "Asistencia"];
 
-const ENCABEZADOS_GENERADOR = [
-  "Nombre / Familia",
-  "Telefono (WhatsApp)",
-  "Lugares",
-  "Enlace de Invitacion",
-  "Enviar por WhatsApp",
-  "Estado RSVP",
-  "Confirmados"
+const ENCABEZADOS_ENVIOS = [
+  "Invitado / Familia",
+  "Teléfono (WhatsApp)",
+  "Lugares Reservados",
+  "Enviar Invitación por WhatsApp",
+  "Estado de Confirmación"
 ];
 
 /** Crea y formatea ambas pestanas con sus formulas y filtros listos. */
 function configurarHoja() {
   const libro = SpreadsheetApp.getActiveSpreadsheet();
 
-  // 1. Configurar Pestana RSVP
+  // 1. Configurar Pestana RSVP (lo mas limpia posible: Nombre | Apellido | Asistencia)
   let hojaRsvp = libro.getSheetByName(NOMBRE_HOJA_RSVP);
   if (!hojaRsvp) hojaRsvp = libro.insertSheet(NOMBRE_HOJA_RSVP, 0);
 
@@ -62,17 +52,15 @@ function configurarHoja() {
     .setHorizontalAlignment("center");
 
   hojaRsvp.setFrozenRows(1);
-  hojaRsvp.setColumnWidth(1, 160); // Nombre
-  hojaRsvp.setColumnWidth(2, 160); // Apellido
-  hojaRsvp.setColumnWidth(3, 190); // Asistencia
-  hojaRsvp.setColumnWidth(4, 150); // Lugares Asignados
-  hojaRsvp.setColumnWidth(5, 160); // Lugares Confirmados
+  hojaRsvp.setColumnWidth(1, 180); // Nombre
+  hojaRsvp.setColumnWidth(2, 180); // Apellido
+  hojaRsvp.setColumnWidth(3, 200); // Asistencia
 
   if (!hojaRsvp.getFilter()) {
     hojaRsvp.getRange(1, 1, Math.max(hojaRsvp.getMaxRows(), 2), colsRsvp).createFilter();
   }
 
-  // Formato condicional en RSVP
+  // Formato condicional en RSVP: verde si asiste, rojo suave si no
   hojaRsvp.clearConditionalFormatRules();
   const rangoRsvp = hojaRsvp.getRange(2, 3, Math.max(hojaRsvp.getMaxRows() - 1, 1), 1);
   hojaRsvp.setConditionalFormatRules([
@@ -90,79 +78,83 @@ function configurarHoja() {
       .build(),
   ]);
 
-  // 2. Configurar Pestana Generador de Invitaciones
-  let hojaGen = libro.getSheetByName(NOMBRE_HOJA_GENERADOR);
-  if (!hojaGen) hojaGen = libro.insertSheet(NOMBRE_HOJA_GENERADOR, 1);
+  // 2. Configurar Pestana Invitaciones y WhatsApp
+  let hojaEnvios = libro.getSheetByName(NOMBRE_HOJA_ENVIOS);
+  if (!hojaEnvios) hojaEnvios = libro.insertSheet(NOMBRE_HOJA_ENVIOS, 1);
 
-  const colsGen = ENCABEZADOS_GENERADOR.length;
-  hojaGen.getRange(1, 1, 1, colsGen)
-    .setValues([ENCABEZADOS_GENERADOR])
+  const colsEnvios = ENCABEZADOS_ENVIOS.length;
+  hojaEnvios.getRange(1, 1, 1, colsEnvios)
+    .setValues([ENCABEZADOS_ENVIOS])
     .setFontWeight("bold")
     .setFontColor("#FFFFFF")
     .setBackground("#324D3E")
     .setHorizontalAlignment("center");
 
-  hojaGen.setFrozenRows(1);
-  hojaGen.setColumnWidth(1, 200); // Nombre / Familia
-  hojaGen.setColumnWidth(2, 170); // Telefono
-  hojaGen.setColumnWidth(3, 90);  // Lugares
-  hojaGen.setColumnWidth(4, 260); // Enlace
-  hojaGen.setColumnWidth(5, 190); // WhatsApp
-  hojaGen.setColumnWidth(6, 160); // Estado RSVP
-  hojaGen.setColumnWidth(7, 120); // Confirmados
+  hojaEnvios.setFrozenRows(1);
+  hojaEnvios.setColumnWidth(1, 220); // Invitado / Familia
+  hojaEnvios.setColumnWidth(2, 170); // Telefono
+  hojaEnvios.setColumnWidth(3, 140); // Lugares Reservados
+  hojaEnvios.setColumnWidth(4, 240); // Enviar Invitacion por WhatsApp
+  hojaEnvios.setColumnWidth(5, 170); // Estado de Confirmacion
 
-  // Configurar celda de URL Base en I1 e I2
-  hojaGen.getRange("I1").setValue("URL BASE DE LA WEB").setFontWeight("bold").setFontColor("#324D3E");
-  if (!hojaGen.getRange("I2").getValue()) {
-    hojaGen.getRange("I2").setValue(URL_BASE_DEFAULT);
+  // Celda de URL de la invitacion (G1 y G2)
+  hojaEnvios.getRange("G1").setValue("ENLACE DE LA INVITACIÓN (WEB):").setFontWeight("bold").setFontColor("#324D3E");
+  if (!hojaEnvios.getRange("G2").getValue()) {
+    hojaEnvios.getRange("G2").setValue(URL_BASE_DEFAULT);
   }
-  hojaGen.setColumnWidth(9, 280);
+  hojaEnvios.setColumnWidth(7, 290);
 
-  // Colocar formulas automaticas en las primeras 60 filas
-  const cantFilas = 60;
+  // Colocar formulas automaticas para las primeras 80 filas
+  const cantFilas = 80;
   for (let r = 2; r <= cantFilas + 1; r++) {
-    // Columna D: Enlace de Invitacion
-    hojaGen.getRange(r, 4).setFormula(
-      `=IF(ISBLANK(A${r}), "", $I$2 & "/?invitado=" & ENCODEURL(A${r}) & "&cupos=" & IF(ISBLANK(C${r}), 1, C${r}))`
-    );
+    // Columna D: Enlace de WhatsApp con el texto carinoso formateado
+    const formulaWhatsApp =
+      `=IF(OR(ISBLANK(A${r}), ISBLANK(B${r})), "", HYPERLINK("https://wa.me/" & ` +
+      `SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(TO_TEXT(B${r}),"+",""),"-","")," ",""),"(",""),")","") & ` +
+      `"?text=" & ENCODEURL(` +
+      `"¡Hola " & A${r} & "! ✨🤍" & CHAR(10) & CHAR(10) & ` +
+      `"Con mucha alegría y emoción queremos invitarte a celebrar nuestra boda. Dios y la vida nos han bendecido con este amor, y será un honor inmenso compartir este día tan especial con vos." & CHAR(10) & CHAR(10) & ` +
+      `IF(C${r}=1, "Hemos reservado 1 lugar con mucho cariño para vos.", "Hemos reservado " & C${r} & " lugares con mucho cariño para tu familia.") & CHAR(10) & CHAR(10) & ` +
+      `"Te compartimos nuestra invitación digital con todos los detalles de la ceremonia, horario y ubicación:" & CHAR(10) & ` +
+      `$G$2 & CHAR(10) & CHAR(10) & ` +
+      `"Por favor, confirmá tu asistencia antes del 1 de Noviembre desde la misma página." & CHAR(10) & CHAR(10) & ` +
+      `"¡Te esperamos con los brazos abiertos para celebrar juntos! 🥂💍" & CHAR(10) & CHAR(10) & ` +
+      `"Con todo nuestro cariño," & CHAR(10) & ` +
+      `"Diego & Liz"` +
+      `), "📲 Enviar por WhatsApp"))`;
 
-    // Columna E: Boton WhatsApp
-    hojaGen.getRange(r, 5).setFormula(
-      `=IF(OR(ISBLANK(A${r}), ISBLANK(B${r})), "", HYPERLINK("https://wa.me/" & SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(SUBSTITUTE(TO_TEXT(B${r}),"+",""),"-","")," ",""),"(","") & "?text=" & ENCODEURL("¡Hola " & A${r} & "! ❤️ Con mucha alegría te invitamos a celebrar nuestra boda. Preparamos una invitación especial para ustedes con " & IF(ISBLANK(C${r}),1,C${r}) & IF(IF(ISBLANK(C${r}),1,C${r})=1," lugar reservado: "," lugares reservados: ") & D${r} & " Te esperamos con mucho cariño, Diego & Liz."), "📲 Enviar WhatsApp"))`
-    );
+    hojaEnvios.getRange(r, 4).setFormula(formulaWhatsApp);
 
-    // Columna F: Estado RSVP (busca por Nombre o Apellido en RSVP)
-    hojaGen.getRange(r, 6).setFormula(
-      `=IF(ISBLANK(A${r}), "", IFERROR(VLOOKUP(A${r}, RSVP!A:E, 3, FALSE), IFERROR(VLOOKUP(TRIM(RIGHT(SUBSTITUTE(A${r}," ",REPT(" ",50)),50)), RSVP!B:E, 2, FALSE), "⏳ Pendiente")))`
-    );
+    // Columna E: Estado de Confirmacion en tiempo real (busca en RSVP)
+    const formulaEstado =
+      `=IF(ISBLANK(A${r}), "", ` +
+      `IFERROR(VLOOKUP(A${r}, RSVP!A:C, 3, FALSE), ` +
+      `IFERROR(VLOOKUP(TRIM(RIGHT(SUBSTITUTE(A${r}," ",REPT(" ",50)),50)), RSVP!B:C, 2, FALSE), "⏳ Pendiente")))`;
 
-    // Columna G: Confirmados
-    hojaGen.getRange(r, 7).setFormula(
-      `=IF(ISBLANK(A${r}), "", IFERROR(VLOOKUP(A${r}, RSVP!A:E, 5, FALSE), IFERROR(VLOOKUP(TRIM(RIGHT(SUBSTITUTE(A${r}," ",REPT(" ",50)),50)), RSVP!B:E, 4, FALSE), "-")))`
-    );
+    hojaEnvios.getRange(r, 5).setFormula(formulaEstado);
   }
 
-  // Formato condicional en Generador (Estado RSVP)
-  hojaGen.clearConditionalFormatRules();
-  const rangoGen = hojaGen.getRange(2, 6, cantFilas, 1);
-  hojaGen.setConditionalFormatRules([
+  // Formato condicional en Generador (Estado de Confirmacion)
+  hojaEnvios.clearConditionalFormatRules();
+  const rangoEstado = hojaEnvios.getRange(2, 5, cantFilas, 1);
+  hojaEnvios.setConditionalFormatRules([
     SpreadsheetApp.newConditionalFormatRule()
       .whenTextStartsWith("Sí")
       .setBackground("#DDE6DA")
       .setFontColor("#263F32")
-      .setRanges([rangoGen])
+      .setRanges([rangoEstado])
       .build(),
     SpreadsheetApp.newConditionalFormatRule()
       .whenTextStartsWith("No")
       .setBackground("#F2D9D5")
       .setFontColor("#7A2922")
-      .setRanges([rangoGen])
+      .setRanges([rangoEstado])
       .build(),
     SpreadsheetApp.newConditionalFormatRule()
       .whenTextContains("Pendiente")
       .setBackground("#FFF3CD")
       .setFontColor("#856404")
-      .setRanges([rangoGen])
+      .setRanges([rangoEstado])
       .build(),
   ]);
 
@@ -193,8 +185,6 @@ function doPost(e) {
     const nombre = normalizar(params.nombre);
     const apellido = normalizar(params.apellido);
     const asistencia = normalizar(params.asistencia);
-    const cuposAsignados = parseInt(params.cupos_asignados || "1", 10) || 1;
-    const cuposConfirmados = parseInt(params.cupos_confirmados || (asistencia.startsWith("No") ? "0" : "1"), 10);
 
     if (!nombre || !apellido) {
       throw new Error("Faltan nombre o apellido.");
@@ -214,11 +204,9 @@ function doPost(e) {
     }
 
     if (fila === -1) {
-      hoja.appendRow([nombre, apellido, asistencia, cuposAsignados, cuposConfirmados]);
+      hoja.appendRow([nombre, apellido, asistencia]);
     } else {
       hoja.getRange(fila, 3).setValue(asistencia);
-      hoja.getRange(fila, 4).setValue(cuposAsignados);
-      hoja.getRange(fila, 5).setValue(cuposConfirmados);
     }
 
     return ContentService
@@ -236,6 +224,6 @@ function doPost(e) {
 
 function doGet() {
   return ContentService
-    .createTextOutput(JSON.stringify({ estado: "El script de RSVP y generador de invitaciones esta activo." }))
+    .createTextOutput(JSON.stringify({ estado: "El script de RSVP y generador de WhatsApp esta activo." }))
     .setMimeType(ContentService.MimeType.JSON);
 }
