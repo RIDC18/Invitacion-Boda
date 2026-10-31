@@ -2902,12 +2902,8 @@ body.site-opened .progreso-scroll {
 :is(.countdown__grid, .gifts-grid) > :nth-child(7) { --i: 6; }
 :is(.countdown__grid, .gifts-grid) > :nth-child(8) { --i: 7; }
 
-.gallery__grid > :nth-child(6n+1) { --i: 0; }
-.gallery__grid > :nth-child(6n+2) { --i: 1; }
-.gallery__grid > :nth-child(6n+3) { --i: 2; }
-.gallery__grid > :nth-child(6n+4) { --i: 3; }
-.gallery__grid > :nth-child(6n+5) { --i: 4; }
-.gallery__grid > :nth-child(6n+6) { --i: 5; }
+.gallery__grid > :nth-child(2n+1) { --i: 0; }
+.gallery__grid > :nth-child(2n)   { --i: 1; }
 
 .reveal-enabled [data-aos].is-visible :is(
   .eyebrow, .section-title, .rings-icon, .welcome__card, .calendar-card,
