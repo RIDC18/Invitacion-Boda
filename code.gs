@@ -4,12 +4,12 @@
  * Hoja 1 ("Invitaciones y WhatsApp"):
  *   Nombre y Apellido | Cantidad de Personas | Enlace para WhatsApp
  *
- * Hoja 2 ("RSVP"):
+ * Hoja 2 ("Confirmaciones"):
  *   Nombre y Apellido | Asistencia
  */
 
 const SPREADSHEET_ID = "18OaB28TvK-y3j8D5SBJfmrJUcC-5lxMGJ_Rbkgnx5OQ";
-const NOMBRE_HOJA_RSVP = "RSVP";
+const NOMBRE_HOJA_CONFIRMACIONES = "Confirmaciones";
 
 function obtenerLibro() {
   return SpreadsheetApp.getActiveSpreadsheet() || SpreadsheetApp.openById(SPREADSHEET_ID);
@@ -47,9 +47,12 @@ function doPost(e) {
     lock.waitLock(10000);
 
     const libro = obtenerLibro();
-    let hoja = libro.getSheetByName(NOMBRE_HOJA_RSVP);
+    let hoja =
+      libro.getSheetByName(NOMBRE_HOJA_CONFIRMACIONES) ||
+      libro.getSheetByName("RSVP") ||
+      libro.getSheets()[1];
     if (!hoja) {
-      hoja = libro.insertSheet(NOMBRE_HOJA_RSVP);
+      hoja = libro.insertSheet(NOMBRE_HOJA_CONFIRMACIONES);
       hoja.getRange(1, 1, 1, 2).setValues([["Nombre y Apellido", "Asistencia"]]);
     }
 
