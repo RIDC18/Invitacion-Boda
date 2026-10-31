@@ -11,7 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20261030_2215">
+<link rel="stylesheet" href="style.css?v=20261030_2235">
 
 <!-- Definida aquí (no en app.js) para que esté disponible apenas el
      navegador intenta cargar las fotos de la galería -->
@@ -556,21 +556,36 @@
     <p class="gallery-intro">Algunos recuerdos del camino que nos trajo hasta aquí...</p>
 
     <div class="gallery__grid" id="gallery-grid">
-      <!-- EDITABLE: fotos de ejemplo. Reemplaza cada URL por img/foto1.jpg, img/foto2.jpg, etc. cuando tengas las fotos reales. -->
-      <div class="gallery__item"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="Foto de ejemplo para galería 1" loading="lazy" referrerpolicy="no-referrer" onerror="imgFallback(this)"></div>
-      <div class="gallery__item"><img src="https://images.unsplash.com/photo-1523438885200-e635ba2c371e?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="Foto de ejemplo para galería 2" loading="lazy" referrerpolicy="no-referrer" onerror="imgFallback(this)"></div>
-      <div class="gallery__item"><img src="https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="Foto de ejemplo para galería 3" loading="lazy" referrerpolicy="no-referrer" onerror="imgFallback(this)"></div>
-      <div class="gallery__item"><img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="Foto de ejemplo para galería 4" loading="lazy" referrerpolicy="no-referrer" onerror="imgFallback(this)"></div>
-      <div class="gallery__item"><img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="Foto de ejemplo para galería 5" loading="lazy" referrerpolicy="no-referrer" onerror="imgFallback(this)"></div>
-      <div class="gallery__item"><img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&amp;fit=crop&amp;w=900&amp;q=82" alt="Foto de ejemplo para galería 6" loading="lazy" referrerpolicy="no-referrer" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6398.jpg" alt="Diego &amp; Liz - Reserva la fecha" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6406.jpg" alt="Diego &amp; Liz sonriendo juntos" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6444.jpg" alt="Manos entrelazadas y anillo de compromiso" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6439.jpg" alt="Abrazo y miradas de amor" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6496.jpg" alt="Compartiendo un momento especial en el jardín" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6471.jpg" alt="Baile frente a la iglesia" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6605.jpg" alt="Juntos hacia una nueva etapa" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6413.jpg" alt="Diego &amp; Liz cómplices y felices" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6702.jpg" alt="Atardecer romántico junto al lago" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6711.jpg" alt="Sonrisas frente al atardecer" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6717.jpg" alt="Silueta al atardecer" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6713.jpg" alt="Abrazo al caer el sol" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6730.jpg" alt="Bajo el mirador al atardecer" loading="lazy" onerror="imgFallback(this)"></div>
+      <div class="gallery__item"><img src="img/BCF_6732.jpg" alt="Bailando al atardecer bajo la glorieta" loading="lazy" onerror="imgFallback(this)"></div>
     </div>
   </section>
 
-  <div class="lightbox" id="lightbox">
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Visualizador de fotos">
+    <button class="lightbox__btn lightbox__btn--prev" id="lightbox-prev" type="button" aria-label="Foto anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </button>
+    <div class="lightbox__content">
+      <img id="lightbox-img" src="" alt="">
+    </div>
+    <button class="lightbox__btn lightbox__btn--next" id="lightbox-next" type="button" aria-label="Foto siguiente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"></polyline></svg>
+    </button>
     <button class="lightbox__close" id="lightbox-close" type="button" aria-label="Cerrar imagen">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="5" y1="5" x2="19" y2="19"/><line x1="19" y1="5" x2="5" y2="19"/></svg>
     </button>
-    <img id="lightbox-img" src="" alt="">
   </div>
 
   <!-- =======================================================
@@ -715,6 +730,6 @@
   </svg>
 </button>
 
-<script src="app.js?v=20261030_2215"></script>
+<script src="app.js?v=20261030_2235"></script>
 </body>
 </html>

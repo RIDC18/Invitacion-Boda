@@ -99,7 +99,7 @@ Convenciones: nombres de funciones y variables en español, camelCase; cada bloq
 
 ## 6. Estado actual y pendientes (placeholders)
 
-- [ ] **Galería:** usa 6 fotos de ejemplo de Unsplash (`index.html` ~542–547) con `referrerpolicy="no-referrer"`. Reemplazar por `img/foto1.jpg…` cuando los novios entreguen fotos reales (carpeta `img/` vacía). Recordar añadirlas a `CORE_ASSETS` solo si se quiere uso offline.
+- [x] **Galería:** 14 fotos reales de los novios (`img/BCF_*.jpg`) integradas en la galería `#gallery-grid` con lightbox mejorado (botones previo/siguiente, atajos de teclado y gesto táctil swipe). Las fotos originales de alta resolución están respaldadas en `img_originals/` (fuera del bundle web). Optimización web a 1920px max para carga ultra rápida y bajo consumo de memoria en móviles.
 - [ ] **Regalos:** dos botones "Enlace pendiente" (`Tupi` y "Otra tienda") con clase `is-disabled` y `href="#"`. Poner URL real y quitar `is-disabled` + `aria-disabled`; renombrar "Otra tienda".
 - [ ] **Transferencia:** Titular/Banco/Cuenta dicen "Datos a confirmar".
 - [ ] La URL de `RSVP_SCRIPT_URL` ya está configurada (apunta a un despliegue concreto de Apps Script); no se ha podido verificar desde aquí que siga activo.

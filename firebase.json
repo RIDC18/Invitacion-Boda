@@ -6,6 +6,7 @@
       "**/.*",
       "**/node_modules/**",
       "checkpoints/**",
+      "img_originals/**",
       "code.gs",
       "firebase-debug.log",
       "*.zip",

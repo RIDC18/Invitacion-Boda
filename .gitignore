@@ -1,5 +1,6 @@
 # Salidas de herramientas / capturas de verificación (pesan ~120 MB, incluyen perfiles de Chrome)
 checkpoints/
+img_originals/
 *.zip
 firebase-debug.log
 .firebase/
