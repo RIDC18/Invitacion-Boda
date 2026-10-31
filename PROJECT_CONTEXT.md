@@ -99,7 +99,7 @@ Convenciones: nombres de funciones y variables en español, camelCase; cada bloq
 
 ## 6. Estado actual y pendientes (placeholders)
 
-- [x] **Galería:** Selección cuidada de 8 fotos reales sin tomas repetidas (`img/BCF_*.jpg`) ordenadas narrativamente en `#gallery-grid` con lightbox interactivo (anterior/siguiente, teclado y swipe táctil). Originales de cámara resguardados en `img_originals/`. Carga web optimizada a 1920px max.
+- [x] **Galería:** Selección curada de las 12 mejores fotos reales (`img/BCF_*.jpg`, elegidas entre las 60 fotos verticales y horizontales de la sesión por calidad técnica y significado simbólico: anuncio, anillo, iglesia, ternura, complicidad y atardecer en el lago) ordenadas narrativamente en `#gallery-grid` con lightbox interactivo. Carga web optimizada a 1920px max.
 - [ ] **Regalos:** dos botones "Enlace pendiente" (`Tupi` y "Otra tienda") con clase `is-disabled` y `href="#"`. Poner URL real y quitar `is-disabled` + `aria-disabled`; renombrar "Otra tienda".
 - [ ] **Transferencia:** Titular/Banco/Cuenta dicen "Datos a confirmar".
 - [ ] La URL de `RSVP_SCRIPT_URL` ya está configurada (apunta a un despliegue concreto de Apps Script); no se ha podido verificar desde aquí que siga activo.
