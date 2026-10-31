@@ -4,7 +4,6 @@
     "ignore": [
       "firebase.json",
       "**/.*",
-      "**/.*",
       ".git/**",
       ".vexp/**",
       ".codex/**",
@@ -40,7 +39,7 @@
         ]
       },
       {
-        "source": "**/*.@(jpg|jpeg|gif|png|webp|svg|mp3)",
+        "source": "**/*.@(jpg|jpeg|gif|png|webp|svg|mp3|ogg|wav)",
         "headers": [
           {
             "key": "Cache-Control",

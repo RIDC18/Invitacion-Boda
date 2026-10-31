@@ -27,7 +27,12 @@ if ("serviceWorker" in navigator) {
 /* -----------------------------------------------------------
    1. REVELADO LOCAL — animaciones de scroll fluidas por secciones
    ----------------------------------------------------------- */
+let reveladoIniciado = false;
+
 function activarReveladoScroll() {
+  if (reveladoIniciado) return;
+  reveladoIniciado = true;
+
   const elementos = Array.from(document.querySelectorAll("[data-aos]"));
   if (!elementos.length) return;
 
@@ -43,7 +48,7 @@ function activarReveladoScroll() {
       entradas.forEach((entrada) => {
         if (entrada.isIntersecting) {
           entrada.target.classList.add("is-visible");
-        } else {
+        } else if (!entrada.target.contains(document.activeElement)) {
           entrada.target.classList.remove("is-visible");
         }
       });
@@ -68,7 +73,6 @@ function activarReveladoScroll() {
    2. FONDO AMBIENTAL — pétalos y destellos sutiles
    ----------------------------------------------------------- */
 (function inicializarFondoAmbiental() {
-
   const canvas = document.getElementById("ambient-canvas");
   const wrapper = document.querySelector(".site-wrapper");
   if (!canvas || !wrapper) return;
@@ -103,12 +107,21 @@ function activarReveladoScroll() {
   }
 
   function ajustarTamano() {
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
     ancho = wrapper.clientWidth;
     alto = Math.max(window.innerHeight, wrapper.scrollHeight);
+    if (!ancho || !alto) return;
 
-    canvas.width = Math.floor(ancho * dpr);
-    canvas.height = Math.floor(alto * dpr);
+    // Limita dimensiones/área de textura para evitar cierres por memoria en Safari/iOS y WebViews móviles
+    const maxDim = 8192;
+    const maxArea = 8000000;
+    const dprBase = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.max(
+      0.1,
+      Math.min(dprBase, maxDim / Math.max(ancho, alto), Math.sqrt(maxArea / (ancho * alto)))
+    );
+
+    canvas.width = Math.max(1, Math.floor(ancho * dpr));
+    canvas.height = Math.max(1, Math.floor(alto * dpr));
     canvas.style.height = `${alto}px`;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
@@ -139,6 +152,11 @@ function activarReveladoScroll() {
   }
 
   function animar() {
+    if (document.hidden) {
+      raf = null;
+      return;
+    }
+
     ctx.clearRect(0, 0, ancho, alto);
 
     particulas.forEach((p) => {
@@ -160,6 +178,16 @@ function activarReveladoScroll() {
   if ("ResizeObserver" in window) {
     new ResizeObserver(ajustarTamano).observe(wrapper);
   }
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      if (raf) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    } else if (!raf) {
+      raf = requestAnimationFrame(animar);
+    }
+  });
   window.addEventListener("beforeunload", () => {
     if (raf) cancelAnimationFrame(raf);
   });
@@ -289,11 +317,19 @@ let musicaSilenciada = false;
    En iOS el volumen es de solo lectura, ahí simplemente no hace efecto. */
 function aparecerVolumen(audio, objetivo, ms) {
   const inicio = performance.now();
-  audio.volume = 0;
+  try {
+    audio.volume = 0;
+  } catch (_) {
+    return;
+  }
 
   function paso(ahora) {
-    const t = Math.min(1, (ahora - inicio) / ms);
-    audio.volume = objetivo * t * t * (3 - 2 * t);
+    const t = Math.max(0, Math.min(1, (ahora - inicio) / ms));
+    try {
+      audio.volume = Math.max(0, Math.min(1, objetivo * t * t * (3 - 2 * t)));
+    } catch (_) {
+      return;
+    }
     if (t < 1 && !audio.paused) requestAnimationFrame(paso);
   }
 
@@ -382,7 +418,15 @@ function setMusicaSilenciada(valor) {
   }
 
   function irAlInicio() {
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    } catch (_) {
+      const html = document.documentElement;
+      const previo = html.style.scrollBehavior;
+      html.style.scrollBehavior = "auto";
+      window.scrollTo(0, 0);
+      html.style.scrollBehavior = previo;
+    }
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
   }
@@ -422,6 +466,7 @@ function setMusicaSilenciada(valor) {
       irAlInicio();
       gate.classList.add("gate--closing");
       document.body.classList.add("site-opened");
+      if (musicToggle) musicToggle.classList.add("is-visible");
       activarReveladoScroll();
       const esperaOculto = 900;
       setTimeout(() => {
@@ -504,13 +549,15 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   ];
   const diasSemana = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
-  const anio = FECHA_BODA.getFullYear();
-  const mes = FECHA_BODA.getMonth();
-  const diaBoda = FECHA_BODA.getDate();
+  // Siempre calcula la fecha en horario de Paraguay (UTC-3), sin importar desde qué país se abra la invitación
+  const fechaParaguay = new Date(FECHA_BODA.getTime() - 3 * 60 * 60 * 1000);
+  const anio = fechaParaguay.getUTCFullYear();
+  const mes = fechaParaguay.getUTCMonth();
+  const diaBoda = fechaParaguay.getUTCDate();
 
-  const primerDiaSemana = new Date(anio, mes, 1).getDay();
-  const diasEnMes = new Date(anio, mes + 1, 0).getDate();
-  const diasMesAnterior = new Date(anio, mes, 0).getDate();
+  const primerDiaSemana = new Date(Date.UTC(anio, mes, 1)).getUTCDay();
+  const diasEnMes = new Date(Date.UTC(anio, mes + 1, 0)).getUTCDate();
+  const diasMesAnterior = new Date(Date.UTC(anio, mes, 0)).getUTCDate();
 
   const celdas = [];
 
@@ -615,7 +662,10 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   const btnNext = document.getElementById("lightbox-next");
   const galeria = document.getElementById("gallery-grid");
 
-  if (!lightbox || !galeria) return;
+  const PIXEL_TRANSPARENTE =
+    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
+  if (!lightbox || !lightboxImg || !galeria) return;
 
   function obtenerFotos() {
     return Array.from(galeria.querySelectorAll(".gallery__item img"));
@@ -633,6 +683,12 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
     lightbox.classList.add("is-active");
   }
 
+  lightboxImg.addEventListener("error", () => {
+    if (lightbox.classList.contains("is-active")) {
+      cerrarLightbox();
+    }
+  });
+
   galeria.addEventListener("click", (e) => {
     const img = e.target.closest("img");
     if (!img) return;
@@ -645,7 +701,8 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
     lightbox.classList.remove("is-active");
     setTimeout(() => {
       if (!lightbox.classList.contains("is-active")) {
-        lightboxImg.src = "";
+        lightboxImg.src = PIXEL_TRANSPARENTE;
+        lightboxImg.alt = "";
       }
     }, 300);
   }
@@ -737,11 +794,15 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
 
   if (!form) return;
 
-  function normalizarTexto(valor) {
+  function limpiarEntradaCruda(valor) {
     return String(valor || "")
-      .replace(/[^\p{L} ]/gu, "")
-      .trim()
-      .replace(/\s+/g, " ");
+      .normalize("NFC")
+      .replace(/[\s\u00A0]+/g, " ")
+      .replace(/[^\p{L} ]/gu, "");
+  }
+
+  function normalizarTexto(valor) {
+    return limpiarEntradaCruda(valor).trim();
   }
 
   function formatearNombrePropio(valor) {
@@ -762,9 +823,14 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
 
   [campoNombre, campoApellido].forEach((campo) => {
     campo?.addEventListener("input", () => {
-      campo.value = campo.value
-        .replace(/[^\p{L} ]/gu, "")
-        .replace(/\s{2,}/g, " ");
+      campo.value = limpiarEntradaCruda(campo.value);
+      validarCampoTexto(campo);
+    });
+
+    campo?.addEventListener("change", () => {
+      if (campo.value.trim()) {
+        campo.value = formatearNombrePropio(campo.value);
+      }
       validarCampoTexto(campo);
     });
 
@@ -794,8 +860,11 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
     if (nodo) nodo.classList.add("is-visible");
   }
 
+  let enviando = false;
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    if (enviando) return;
 
     const nombreValido = validarCampoTexto(campoNombre);
     const apellidoValido = validarCampoTexto(campoApellido);
@@ -815,55 +884,91 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
       return;
     }
 
+    if (navigator.onLine === false) {
+      mostrarEstado(estadoError);
+      return;
+    }
+
+    enviando = true;
     submitBtn.disabled = true;
     submitBtn.textContent = "Enviando...";
 
     const datos = new FormData(form);
     const parametros = new URLSearchParams(datos);
+    const controlador = typeof AbortController !== "undefined" ? new AbortController() : null;
+    const temporizador = controlador
+      ? window.setTimeout(() => controlador.abort(), 22000)
+      : null;
 
     try {
       const esAppsScript =
         RSVP_SCRIPT_URL.includes("script.google.com") ||
         RSVP_SCRIPT_URL.includes("script.googleusercontent.com");
 
-      const respuesta = await fetch(RSVP_SCRIPT_URL, {
-        method: "POST",
-        body: parametros,
-        mode: esAppsScript ? "no-cors" : "cors",
-      });
+      let verificadoPorCors = false;
+      try {
+        const opcionesCors = {
+          method: "POST",
+          body: parametros,
+          mode: "cors",
+          redirect: "follow",
+        };
+        if (controlador) opcionesCors.signal = controlador.signal;
 
-      function actualizarMensajeExito() {
-        const asisVal = datos.get("asistencia");
-        const successTitle = document.getElementById("rsvp-success-title");
-        const successText = document.getElementById("rsvp-success-text");
-        if (asisVal === "No podré acompañarlos") {
-          if (successTitle) successTitle.textContent = "¡Gracias por avisarnos!";
-          if (successText) successText.textContent = "Lamentamos que no puedas acompañarnos, ¡te tendremos presente en nuestro gran día!";
-        } else {
-          if (successTitle) successTitle.textContent = "¡Gracias por confirmar!";
-          if (successText) successText.textContent = "Nos hace muy felices saber que serás parte de nuestro gran día.";
+        const respuesta = await fetch(RSVP_SCRIPT_URL, opcionesCors);
+        if (!respuesta.ok) {
+          throw new Error(`Respuesta HTTP no exitosa (${respuesta.status})`);
+        }
+
+        const resultado = await respuesta.json().catch(() => null);
+        if (!resultado || resultado.resultado !== "ok") {
+          throw new Error(resultado?.mensaje || "El servidor RSVP no confirmó el guardado");
+        }
+        verificadoPorCors = true;
+      } catch (errCors) {
+        // Si un bloqueador/navegador bloquea solo la redirección CORS de Apps Script (TypeError),
+        // reintentamos con no-cors para no cortar el envío hacia el Sheet
+        const esBloqueoCors =
+          esAppsScript &&
+          errCors &&
+          errCors.name === "TypeError" &&
+          navigator.onLine !== false;
+        if (!esBloqueoCors) throw errCors;
+
+        const opcionesNoCors = {
+          method: "POST",
+          body: parametros,
+          mode: "no-cors",
+        };
+        if (controlador) opcionesNoCors.signal = controlador.signal;
+        await fetch(RSVP_SCRIPT_URL, opcionesNoCors);
+      }
+      void verificadoPorCors;
+
+      const asisVal = datos.get("asistencia");
+      const successTitle = document.getElementById("rsvp-success-title");
+      const successText = document.getElementById("rsvp-success-text");
+      if (asisVal === "No podré acompañarlos") {
+        if (successTitle) successTitle.textContent = "¡Gracias por avisarnos!";
+        if (successText) {
+          successText.textContent =
+            "Lamentamos que no puedas acompañarnos, ¡te tendremos presente en nuestro gran día!";
+        }
+      } else {
+        if (successTitle) successTitle.textContent = "¡Gracias por confirmar!";
+        if (successText) {
+          successText.textContent =
+            "Nos hace muy felices saber que serás parte de nuestro gran día.";
         }
       }
 
-      if (esAppsScript) {
-        actualizarMensajeExito();
-        mostrarEstado(estadoExito);
-        return;
-      }
-
-      if (!respuesta.ok) throw new Error("Respuesta HTTP no exitosa");
-
-      const resultado = await respuesta.json().catch(() => null);
-      if (resultado && resultado.resultado && resultado.resultado !== "ok") {
-        throw new Error(resultado.mensaje || "Apps Script devolvió error");
-      }
-
-      actualizarMensajeExito();
       mostrarEstado(estadoExito);
     } catch (error) {
       console.error("Error enviando RSVP:", error);
       mostrarEstado(estadoError);
     } finally {
+      if (temporizador) window.clearTimeout(temporizador);
+      enviando = false;
       submitBtn.disabled = false;
       submitBtn.textContent = "Confirmar asistencia";
     }

@@ -33,9 +33,9 @@ Flujo del invitado: abre el link (opcionalmente personalizado `?invitado=Nombre`
 | `index.html` (703 líneas) | Todo el marcado: portal-sobre, hero y secciones | Sí |
 | `style.css` (~1880 líneas) | Todos los estilos, organizado en bloques con cabecera `/* === NOMBRE === */` | Sí |
 | `app.js` (657 líneas) | Toda la lógica, en IIFEs numeradas por sección | Sí |
-| `sw.js` | Service Worker (`CACHE_NAME = "boda-diego-liz-v24"`) | Sí |
-| `audio/` | MP3 de fondo | Sí |
-| `img/` | **Vacía.** Reservada para fotos reales de la galería | Sí |
+| `sw.js` | Service Worker (`CACHE_NAME = "boda-diego-liz-v71"`) | Sí |
+| `audio/` | MP3 de fondo + efectos de apertura de carta (`cardFan2.ogg` / `carta-baraja-clean.wav`) | Sí |
+| `img/` | Foto de bienvenida (`img_01.jpg`) + 12 fotos reales de la galería (`BCF_*.jpg`) | Sí |
 | `code.gs` | Código de Google Apps Script (se pega manualmente en el editor de Apps Script; no corre aquí) | No (ignorado en hosting) |
 | `firebase.json`, `.firebaserc` | Config de Firebase Hosting | No |
 | `checkpoints/` | ~120 MB de capturas JPG, JSON de métricas, perfiles de Chrome y un respaldo (`checkpoint-2026-06-26-gate-before-redesign/`) de una versión previa del portal. **Es artefacto de QA, no código.** No leer ni indexar | No / no versionar |
@@ -91,18 +91,18 @@ Convenciones: nombres de funciones y variables en español, camelCase; cada bloq
 
 ## 5. Backend RSVP (Google Apps Script)
 
-- `code.gs` define `doPost(e)` (anexa fila `[Fecha, Nombre, Apellido, Asistencia]` a la hoja `RSVP`, crea encabezados si está vacía), `doGet()` (ping de estado), `configurarEncabezados()`, `obtenerHoja()`.
-- Campos del formulario: `nombre`, `apellido`, `asistencia` (`"Sí asistiré"` / `"No podré asistir"`).
+- `code.gs` define `doPost(e)` (anexa o actualiza fila `[Nombre y Apellido, Asistencia]` en la hoja `Confirmaciones`, usando `LockService` y evitando duplicados), `doGet()` (ping de estado), `obtenerLibro()`.
+- Campos del formulario: `nombre`, `apellido`, `asistencia` (`"Sí, ¡allí estaré!"` / `"No podré acompañarlos"`, normalizados en `code.gs` a `"Asistira"` / `"No asistira"`).
 - Se despliega manualmente como Web App ("Cualquier persona") desde el editor de Apps Script; la URL `/exec` resultante va en `RSVP_SCRIPT_URL`. **Si se vuelve a desplegar como nueva implementación, la URL cambia y hay que actualizarla.**
-- El front usa `mode: "no-cors"` contra Apps Script ⇒ la respuesta es opaca y **la UI muestra "¡Gracias por confirmar!" aunque el servidor falle**. Solo detecta errores de red. Es una limitación conocida; verificar siempre en la hoja real.
+- El front envía `URLSearchParams` con `mode: "cors"` y timeout de 22 s contra Apps Script (que responde con `Access-Control-Allow-Origin: *`), validando que el JSON devuelto tenga `resultado === "ok"` antes de mostrar éxito.
 - La URL del Web App está en texto plano en `app.js` (es público por diseño; no es un secreto, pero cualquiera podría enviar filas basura).
 
 ## 6. Estado actual y pendientes (placeholders)
 
-- [x] **Galería:** Selección curada de las 12 mejores fotos reales (`img/BCF_*.jpg`, elegidas entre las 60 fotos verticales y horizontales de la sesión por calidad técnica y significado simbólico: anuncio, anillo, iglesia, ternura, complicidad y atardecer en el lago) ordenadas narrativamente en `#gallery-grid` con lightbox interactivo. Carga web optimizada a 1920px max.
-- [ ] **Regalos:** dos botones "Enlace pendiente" (`Tupi` y "Otra tienda") con clase `is-disabled` y `href="#"`. Poner URL real y quitar `is-disabled` + `aria-disabled`; renombrar "Otra tienda".
-- [ ] **Transferencia:** Titular/Banco/Cuenta dicen "Datos a confirmar".
-- [ ] La URL de `RSVP_SCRIPT_URL` ya está configurada (apunta a un despliegue concreto de Apps Script); no se ha podido verificar desde aquí que siga activo.
+- [x] **Galería y bienvenida:** Foto de bienvenida (`img/img_01.jpg`) y selección curada de las 12 mejores fotos reales (`img/BCF_*.jpg`) ordenadas narrativamente en `#gallery-grid` con lightbox interactivo. Carga web optimizada a 1920px max.
+- [x] **Regalos / Transferencia:** Datos reales de transferencia cargados para Diego y Liz con botones de copiado rápido.
+- [x] La URL de `RSVP_SCRIPT_URL` está configurada y verificada activa (`doGet` y `doPost` con CORS operativo).
+- [ ] **Fecha límite de RSVP en HTML:** El texto visible indica confirmar antes del **1 de Noviembre de 2026** (no bloquea el envío técnicamente, pero conviene ajustar si los novios desean extender la fecha).
 - [ ] El texto de la carta/portal dice "Haz clic en el sobre" (pensado para mobile y desktop).
 - [ ] Repo sin commits: se recomienda hacer un commit inicial.
 - Bloques marcados `EDITABLE:` en comentarios HTML señalan los puntos de personalización.
@@ -141,10 +141,7 @@ Notas:
 
 ## 9. Riesgos / deuda técnica conocida
 
-- RSVP "falso éxito" por `no-cors` (ver §5).
 - Sin limitación de spam en el endpoint de Apps Script.
-- `CORE_ASSETS` precachea 5.9 MB de audio en la primera visita (consumo de datos móviles).
-- Fotos de galería dependen de Unsplash externo hasta tener `img/` real.
-- Calendario y cuenta regresiva usan la zona horaria del navegador del invitado para el cálculo del mes (la hora absoluta de `FECHA_BODA` sí incluye `-03:00`).
+- `CORE_ASSETS` precachea ~6 MB de audio en la primera visita (consumo de datos móviles).
 - Sin pruebas automatizadas ni CI.
 
