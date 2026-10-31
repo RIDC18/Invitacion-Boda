@@ -36,8 +36,8 @@ function formatearNombrePropio(valor) {
 
 function normalizarAsistencia(valor) {
   const texto = String(valor || "").trim();
-  if (/^s[ií]/i.test(texto)) return "Sí, ¡allí estaré!";
-  if (/^no/i.test(texto)) return "No podré acompañarlos";
+  if (/^(s[ií]|asistir)/i.test(texto)) return "Asistira";
+  if (/^no/i.test(texto)) return "No asistira";
   return "";
 }
 

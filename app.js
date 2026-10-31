@@ -377,6 +377,24 @@ function setMusicaSilenciada(valor) {
   const envelope = document.getElementById("envelope");
   const musicToggle = document.getElementById("music-toggle");
 
+  if ("scrollRestoration" in history) {
+    history.scrollRestoration = "manual";
+  }
+
+  function irAlInicio() {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }
+
+  irAlInicio();
+  window.addEventListener("pageshow", () => {
+    if (!document.body.classList.contains("site-opened")) {
+      irAlInicio();
+    }
+  });
+  window.addEventListener("beforeunload", irAlInicio);
+
   if (!gate || !envelope) return;
 
   let abierto = false;
@@ -385,6 +403,7 @@ function setMusicaSilenciada(valor) {
     if (abierto) return;
     abierto = true;
 
+    irAlInicio();
     gate.classList.add("gate--opening");
     envelope.classList.add("is-open");
 
@@ -400,6 +419,7 @@ function setMusicaSilenciada(valor) {
 
     const esperaCierre = 2500;
     setTimeout(() => {
+      irAlInicio();
       gate.classList.add("gate--closing");
       document.body.classList.add("site-opened");
       activarReveladoScroll();
@@ -407,6 +427,7 @@ function setMusicaSilenciada(valor) {
       setTimeout(() => {
         gate.style.display = "none";
         document.body.classList.remove("no-scroll");
+        irAlInicio();
       }, esperaOculto);
     }, esperaCierre);
   });
@@ -798,6 +819,7 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
     submitBtn.textContent = "Enviando...";
 
     const datos = new FormData(form);
+    const parametros = new URLSearchParams(datos);
 
     try {
       const esAppsScript =
@@ -806,7 +828,7 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
 
       const respuesta = await fetch(RSVP_SCRIPT_URL, {
         method: "POST",
-        body: datos,
+        body: parametros,
         mode: esAppsScript ? "no-cors" : "cors",
       });
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "boda-diego-liz-v65";
+const CACHE_NAME = "boda-diego-liz-v66";
 const CORE_ASSETS = [
   "/",
   "/index.html",
