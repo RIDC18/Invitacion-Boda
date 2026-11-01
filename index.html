@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,500;0,600;1,500&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Montserrat:wght@500;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
 
-<link rel="stylesheet" href="style.css?v=20261031_2030">
+<link rel="stylesheet" href="style.css?v=20261101_1630">
 
 <noscript>
   <style>
@@ -135,14 +135,6 @@
           <span class="envelope__piece envelope__piece--back" aria-hidden="true">
             <svg viewBox="0 0 420 270" preserveAspectRatio="none">
               <defs>
-                <filter id="paperNoiseBack" x="-8%" y="-8%" width="116%" height="116%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="3" seed="12" result="noise"/>
-                  <feColorMatrix in="noise" type="saturate" values="0"/>
-                  <feComponentTransfer>
-                    <feFuncA type="table" tableValues="0 .075"/>
-                  </feComponentTransfer>
-                  <feBlend in="SourceGraphic" mode="multiply"/>
-                </filter>
                 <linearGradient id="paperBase" x1="0" x2="1" y1="0" y2="1">
                   <stop offset="0" stop-color="#EEF4EC"/>
                   <stop offset=".48" stop-color="#DCE5DA"/>
@@ -156,14 +148,6 @@
           <span class="envelope__piece envelope__piece--top" aria-hidden="true">
             <svg viewBox="0 0 420 270" preserveAspectRatio="none">
               <defs>
-                <filter id="paperNoiseTop" x="-8%" y="-8%" width="116%" height="116%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.82" numOctaves="3" seed="18" result="noise"/>
-                  <feColorMatrix in="noise" type="saturate" values="0"/>
-                  <feComponentTransfer>
-                    <feFuncA type="table" tableValues="0 .08"/>
-                  </feComponentTransfer>
-                  <feBlend in="SourceGraphic" mode="multiply"/>
-                </filter>
                 <linearGradient id="topFold" x1=".12" x2=".85" y1=".05" y2="1">
                   <stop offset="0" stop-color="#F3F7F0"/>
                   <stop offset=".55" stop-color="#DCE6DA"/>
@@ -179,14 +163,6 @@
           <span class="envelope__piece envelope__piece--left" aria-hidden="true">
             <svg viewBox="0 0 420 270" preserveAspectRatio="none">
               <defs>
-                <filter id="paperNoiseLeft" x="-8%" y="-8%" width="116%" height="116%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.86" numOctaves="3" seed="24" result="noise"/>
-                  <feColorMatrix in="noise" type="saturate" values="0"/>
-                  <feComponentTransfer>
-                    <feFuncA type="table" tableValues="0 .065"/>
-                  </feComponentTransfer>
-                  <feBlend in="SourceGraphic" mode="multiply"/>
-                </filter>
                 <linearGradient id="leftFold" x1="0" x2="1" y1=".1" y2=".9">
                   <stop offset="0" stop-color="#EAF1E8"/>
                   <stop offset=".62" stop-color="#D4E0D2"/>
@@ -201,14 +177,6 @@
           <span class="envelope__piece envelope__piece--right" aria-hidden="true">
             <svg viewBox="0 0 420 270" preserveAspectRatio="none">
               <defs>
-                <filter id="paperNoiseRight" x="-8%" y="-8%" width="116%" height="116%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.84" numOctaves="3" seed="31" result="noise"/>
-                  <feColorMatrix in="noise" type="saturate" values="0"/>
-                  <feComponentTransfer>
-                    <feFuncA type="table" tableValues="0 .065"/>
-                  </feComponentTransfer>
-                  <feBlend in="SourceGraphic" mode="multiply"/>
-                </filter>
                 <linearGradient id="rightFold" x1="1" x2="0" y1=".05" y2=".95">
                   <stop offset="0" stop-color="#EFF5ED"/>
                   <stop offset=".58" stop-color="#D7E2D5"/>
@@ -223,14 +191,6 @@
           <span class="envelope__piece envelope__piece--bottom" aria-hidden="true">
             <svg viewBox="0 0 420 270" preserveAspectRatio="none">
               <defs>
-                <filter id="paperNoiseBottom" x="-8%" y="-8%" width="116%" height="116%">
-                  <feTurbulence type="fractalNoise" baseFrequency="0.88" numOctaves="3" seed="42" result="noise"/>
-                  <feColorMatrix in="noise" type="saturate" values="0"/>
-                  <feComponentTransfer>
-                    <feFuncA type="table" tableValues="0 .07"/>
-                  </feComponentTransfer>
-                  <feBlend in="SourceGraphic" mode="multiply"/>
-                </filter>
                 <linearGradient id="bottomFold" x1=".5" x2=".5" y1="0" y2="1">
                   <stop offset="0" stop-color="#E9F0E6"/>
                   <stop offset=".58" stop-color="#D6E1D4"/>
@@ -296,7 +256,7 @@
     <source src="audio/carta-baraja-clean.wav" type="audio/wav">
   </audio>
 
-  <!-- Música opcional: coloca el archivo legalmente en /audio con este nombre -->
+  <!-- Música de fondo (Photograph — Ed Sheeran) -->
   <audio id="bg-music" preload="none">
     <source src="audio/photograph-ed-sheeran.mp3" type="audio/mpeg">
   </audio>
@@ -730,6 +690,6 @@
   </svg>
 </button>
 
-<script src="app.js?v=20261031_2045"></script>
+<script src="app.js?v=20261101_1630"></script>
 </body>
 </html>

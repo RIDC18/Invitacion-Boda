@@ -1,6 +1,6 @@
 # PROJECT_CONTEXT — Invitación de Boda Diego & Liz
 
-> Documento para IAs y desarrolladores. Léelo completo antes de tocar código. Última revisión: 2026-10-29.
+> Documento para IAs y desarrolladores. Léelo completo antes de tocar código. Última revisión: 2026-11-01.
 > Idioma del producto y de los comentarios del código: **español (Paraguay)**. Responde al usuario en español.
 
 ## 1. Qué es
@@ -14,84 +14,84 @@ Flujo del invitado: abre el link (opcionalmente personalizado `?invitado=Nombre`
 | Fecha/hora | **21 de noviembre de 2026, 20:30** (UTC-3, Paraguay) |
 | Lugar | Salón de Eventos de la Cooperativa ÑandeMba'e (ceremonia y recepción en el mismo sitio). Maps: https://maps.app.goo.gl/Z15joEe78psNLWvZA |
 | Dress code | Elegante Formal |
-| Hosting | Firebase Hosting, proyecto `boda-diego-liz-2026` (`.firebaserc`). URL esperable: `https://boda-diego-liz-2026.web.app` (inferida, no verificada) |
-| Backend RSVP | Google Apps Script (`code.gs`) → Google Sheets, pestaña `RSVP` |
-| Música | `audio/photograph-ed-sheeran.mp3` (~5.9 MB, con fallback sintetizado por Web Audio) |
+| Hosting | Firebase Hosting, proyecto `boda-diego-liz-2026` (`.firebaserc`). Producción activa: `https://boda-diego-liz-2026.web.app` |
+| Backend RSVP | Google Apps Script (`code.gs`) → Google Sheets (`1ETEM0oO6y_pI50QHHlFamLvkGtVjad6d7ubh384no3g`), pestaña `Confirmaciones` |
+| Música y SFX | `audio/photograph-ed-sheeran.mp3` (~6.2 MB, con fallback sintetizado por Web Audio) + `audio/cardFan2.ogg` / `audio/carta-baraja-clean.wav` |
 
 ## 2. Stack
 
 - HTML5 + CSS3 + JavaScript vanilla (ES2020, sin módulos, sin bundler).
 - Fuentes de Google Fonts: Great Vibes (script), Playfair Display (display), Cormorant Garamond (serif), Montserrat (sans), Poppins (cuerpo).
-- Todo el arte (sobre, sello, botánicos, iconos) es **SVG inline** en `index.html`; no hay imágenes locales salvo el audio.
+- Arte ornamental (sobre, sello, botánicos, iconos) en **SVG inline** en `index.html`, acompañado de 13 fotografías locales optimizadas en `img/` (`img_01.jpg` + 12 fotos reales `BCF_*.jpg`).
 - PWA ligera: `sw.js` (Service Worker) con caché propia.
-- Sin tests automatizados. Verificación = revisión visual en navegador (ver §7).
+- Sin tests automatizados. Verificación = `npm.cmd run check` + revisión visual en navegador (ver §7).
 
 ## 3. Estructura del repo
 
 | Ruta | Rol | Se despliega |
 |---|---|---|
-| `index.html` (703 líneas) | Todo el marcado: portal-sobre, hero y secciones | Sí |
-| `style.css` (~1880 líneas) | Todos los estilos, organizado en bloques con cabecera `/* === NOMBRE === */` | Sí |
-| `app.js` (657 líneas) | Toda la lógica, en IIFEs numeradas por sección | Sí |
-| `sw.js` | Service Worker (`CACHE_NAME = "boda-diego-liz-v71"`) | Sí |
+| `index.html` (695 líneas) | Todo el marcado: portal-sobre, hero y secciones | Sí |
+| `style.css` (2925 líneas) | Todos los estilos, organizado en bloques con cabecera `/* === NOMBRE === */` | Sí |
+| `app.js` (1022 líneas) | Toda la lógica, en IIFEs numeradas por sección | Sí |
+| `sw.js` (135 líneas) | Service Worker (`CACHE_NAME = "boda-diego-liz-v75"`) | Sí |
 | `audio/` | MP3 de fondo + efectos de apertura de carta (`cardFan2.ogg` / `carta-baraja-clean.wav`) | Sí |
 | `img/` | Foto de bienvenida (`img_01.jpg`) + 12 fotos reales de la galería (`BCF_*.jpg`) | Sí |
-| `code.gs` | Código de Google Apps Script (se pega manualmente en el editor de Apps Script; no corre aquí) | No (ignorado en hosting) |
+| `code.gs` (95 líneas) | Código de Google Apps Script (se pega manualmente en el editor de Apps Script; no corre aquí) | No (ignorado en hosting) |
 | `firebase.json`, `.firebaserc` | Config de Firebase Hosting | No |
 | `checkpoints/` | ~120 MB de capturas JPG, JSON de métricas, perfiles de Chrome y un respaldo (`checkpoint-2026-06-26-gate-before-redesign/`) de una versión previa del portal. **Es artefacto de QA, no código.** No leer ni indexar | No / no versionar |
 | `*.zip` | Paquetes antiguos (`Invitacion-Boda-...-paquete-nube.zip` no incluye `sw.js`; está desactualizado) | No |
 | `firebase-debug.log` | Log del CLI de Firebase | No |
 | `AGENTS.md`, `.codex/`, `.vexp/` | Configuración de herramientas de IA (vexp, hooks de Codex). No tocar | No |
-| `package.json`, `.gitignore`, `PROJECT_CONTEXT.md` | Entorno/documentación (añadidos 2026-10-29) | No |
+| `package.json`, `.gitignore`, `PROJECT_CONTEXT.md` | Entorno/documentación | No |
 
-Git: repo inicializado en `master`, **sin ningún commit todavía**.
+Git: rama principal `main` conectada a `https://github.com/RIDC18/Invitacion-Boda.git` (con tag de respaldo `checkpoint-base-funcional`).
 
 ## 4. Arquitectura del frontend
 
 ### 4.1 `index.html` — orden de secciones
-1. `<head>`: fuentes, `style.css`, y la función global `imgFallback(img)` (inline a propósito, para estar lista antes de que carguen las fotos; si una foto falla muestra un placeholder "Agrega tu foto").
-2. `.site-wrapper` con `<canvas id="ambient-canvas">` (pétalos/destellos).
+1. `<head>`: fuentes, `style.css`, `<noscript>` y la función global `imgFallback(img)` (inline a propósito, para estar lista antes de que carguen las fotos; si una foto falla muestra un placeholder "Agrega tu foto").
+2. `#progreso-scroll` (hilo dorado de progreso de lectura) + `.site-wrapper` con `<canvas id="ambient-canvas">` (pétalos/destellos).
 3. `#gate` — portal del sobre (`#envelope`, `#seal`, `#gate-guest-name`). Dos ramas botánicas SVG, sobre armado con 5 piezas SVG (`back/top/left/right/bottom`) + carta + sello "D&L".
-4. `<audio id="bg-music" loop preload="none">`.
-5. `header.hero` (monograma, "Nos casamos", nombres).
-6. `.welcome` → `.calendar-section` (`#calendar-grid`, generado por JS) → `.countdown` (`#dias #horas #minutos #segundos`, `#countdown-done`) → `.timeline-section` → `.locations` → `.dress-code` → `.gallery-section` (`#gallery-grid` + `#lightbox`) → `.gifts-section` → `.rsvp-section` (`#rsvp-form`) → `footer.final`.
-7. `#music-toggle` (botón flotante) y `<script src="app.js">`.
+4. `<audio id="sfx-carta" preload="auto">` + `<audio id="bg-music" preload="none">`.
+5. `header.hero` (monograma con guirnalda, "¡Nos casamos!", nombres).
+6. `.welcome` → `.calendar-section` (`#calendar-grid`, generado por JS) → `.countdown` (`#dias #horas #minutos #segundos`, `#countdown-done`) → `.timeline-section` → `.locations` → `.dress-code` → `.gallery-section` (`#gallery-grid`) → `.gifts-section` (`#toggle-transfer-btn` + `#transfer-details`) → `.rsvp-section` (`#rsvp-form`) → `footer.final`.
+7. `#lightbox` (visor a pantalla completa), `#music-toggle` (botón flotante) y `<script src="app.js">`.
 
 Las secciones usan `data-aos="fade-up"`, pero **no se usa la librería AOS**: el revelado lo implementa `app.js` (§4.2 bloque 1).
 
-Itinerario (hardcodeado en HTML): 20:30 Ceremonia · 22:30 Recepción · 23:30 Brindis · 00:00 Vals · 01:00 Corte del Pastel · 01:30 Música y Baile.
+Itinerario (hardcodeado en HTML): `20:30 h` Ceremonia · `22:30 h` Recepción · `23:30 h` Brindis · `Y después...` ¡A celebrar nuestro amor!.
 
 ### 4.2 `app.js` — bloques (comentarios numerados en el código)
 0. **Configuración** (arriba del archivo): `FECHA_BODA` (`new Date("2026-11-21T20:30:00-03:00")`) y `RSVP_SCRIPT_URL` (URL del Web App de Apps Script). Registro del Service Worker (`/sw.js`).
-1. Revelado on-scroll con `IntersectionObserver` (añade `.is-visible`; la clase `reveal-enabled` en `<html>` activa el estado oculto; sin JS o con `prefers-reduced-motion` el contenido queda visible).
-2. Fondo ambiental en canvas (30–58 partículas según alto de página).
+1. Revelado on-scroll con `IntersectionObserver` (añade `.is-visible` tras abrir el sobre; sin JS o con `prefers-reduced-motion` el contenido queda accesible).
+2. Fondo ambiental en canvas (30–58 partículas según alto de página; se omite con `prefers-reduced-motion`).
 3. Nombre del invitado: `?invitado=` o `?guest=` → `#gate-guest-name` (se inserta con `textContent`, seguro contra XSS).
-4. Música: `musicaSintetica` (acordes con Web Audio) + `reproducirMusica()` que intenta primero el MP3 y cae al sintetizado. Funciones: `reproducirMusica`, `pausarMusica`, `setMusicaSilenciada`, `actualizarIconoMusica`.
-5. Apertura del sobre (`inicializarSobre`): al click añade `.is-open`, inicia música, a los 2300 ms añade `.gate--closing`, a los 820 ms más oculta `#gate` y quita `no-scroll` del `<body>`.
-6. Calendario autogenerado desde `FECHA_BODA` (marca el día con anillo).
-7. Cuenta regresiva (setInterval 1 s; al llegar a 0 muestra "¡Hoy es el gran día!").
-8. Lightbox de la galería.
-9. Botones de regalo con clase `.is-disabled` no navegan.
-10. RSVP: valida nombre/apellido (solo letras `\p{L}` y espacios, 2–40), envía `FormData` por `fetch` POST a Apps Script.
+4. Apertura del sobre (`inicializarSobre`): al click reproduce `sonidoApertura`, inicia `reproducirMusica()` con fade-in de 3 s (o fallback `musicaSintetica` con Web Audio), a los 2500 ms añade `.gate--closing` y `.site-opened`, y a los 900 ms más oculta `#gate` y quita `no-scroll` del `<body>`.
+5. Botón flotante de música (`inicializarMusica`, `setMusicaSilenciada`, `actualizarIconoMusica`).
+6. Calendario autogenerado desde `FECHA_BODA` en horario fijo de Paraguay (`UTC-3`), marcando el día 21 con anillo.
+7. Cuenta regresiva (`setInterval` 1 s; al llegar a 0 oculta encabezado/grilla/pie y muestra "¡Hoy es el gran día! ❤️").
+8. Lightbox de la galería (`inicializarLightbox`): amplía fotos de `#gallery-grid` y `.welcome__photo img` a pantalla completa y cierra al clic o `Escape`.
+9. RSVP (`inicializarRSVP`): valida `nombre` y `apellido` por separado (solo letras `\p{L}` y espacios simples, 2–40 caracteres, formateados en Title Case) y envía `URLSearchParams` por `fetch` POST (`cors` verificando `{ resultado: "ok" }`, con respaldo `no-cors` ante bloqueadores).
+10. Barra de progreso de lectura (`inicializarProgresoScroll`).
+11. Datos de transferencia (`inicializarTransferencia`): despliega cuentas de Diego (`5100585`) y Liz (`5987107`) y copia Alias/CI al portapapeles.
 
 Convenciones: nombres de funciones y variables en español, camelCase; cada bloque es una IIFE `inicializarXxx`; se respeta `prefiereMovimientoReducido`.
 
 ### 4.3 `style.css`
-- Paleta (variables en `:root`): `--bosque #324D3E`, `--salvia #8EA68C`, `--salvia-claro #BFD0BD`, `--crema #F8F5F0`, `--dorado #C8A468`, `--tinta #3F5141`, `--nacar #FFFDF8`. Variables propias del portal: `--gate-ivory/green/sage/gold`.
+- Paleta (variables en `:root`): `--bosque #324D3E`, `--salvia-oscuro #738A6E`, `--salvia #8EA68C`, `--salvia-claro #BFD0BD`, `--salvia-muyclaro #DAE6D8`, `--eucalipto #757F6E`, `--crema #F8F5F0`, `--dorado #C8A468`, `--dorado-suave #E4D2A6`, `--tinta #3F5141`, `--nacar #FFFDF8`. Variables propias del portal: `--gate-ivory/green/sage/gold`.
 - Tipografías vía `--f-script/--f-display/--f-serif/--f-sans/--f-body`.
-- Enfoque **mobile-first**; media queries: `max-width:390px`, `max-height:720px`, `max-width:480px`, `max-width:600px`, `min-width:601px`, y `prefers-reduced-motion` al final.
-- Mapa por líneas aprox.: reset 37 · utilidades 101 · florales 223 · **portal/sobre 235–762** · hero 763 · bienvenida 904 · calendario 954 · countdown 1044 · itinerario 1146 · ubicación 1208 · vestimenta 1275 · regalos 1350 · galería 1493 · RSVP 1572 · footer 1678 · botón música 1722 · responsive 1776+.
-- Animaciones clave del sobre: `envelopeBreath`, `sealGlow`, `sealRelease`, `envelopeFlapOpen`, `letterRiseFromPocket`, `gateFade`.
+- Enfoque **mobile-first**; media queries: `max-width:390px`, `max-height:720px`, `max-width:480px`, `max-width:540px`, `max-width:600px`, `min-width:601px`, `hover: hover`, y `prefers-reduced-motion` al final.
+- Animaciones clave del sobre: `botanicalUnfurlTL/BR`, `envelopeBreath`, `sealGlow`, `sealRelease`, `envelopeFlapOpen`, `letterRiseFromPocket`, `gateFade`.
 
 ### 4.4 Service Worker (`sw.js`)
-- Precachea `/`, `/index.html`, `/style.css`, `/app.js` y el MP3 (rutas **absolutas desde la raíz**: el sitio debe servirse desde `/`, no desde un subdirectorio).
-- HTML/CSS/JS: **network-first** con fallback a caché. Resto: cache-first. Google Fonts: network-first con caché.
-- Soporta peticiones `Range` (necesario para el `<audio>` en Safari/iOS) devolviendo `206` desde caché.
-- **Regla:** al cambiar cualquier asset precacheado, incrementar `CACHE_NAME` (hoy `v24`) para invalidar cachés viejas. Si se añade un archivo crítico, agregarlo a `CORE_ASSETS`.
+- Precachea `/`, `/index.html`, `/style.css`, `/app.js`, `/audio/photograph-ed-sheeran.mp3`, `/audio/cardFan2.ogg` y `/audio/carta-baraja-clean.wav` (rutas **absolutas desde la raíz**: el sitio debe servirse desde `/`, no desde un subdirectorio).
+- HTML/CSS/JS: **network-first** con fallback a caché (ignorando `?v=` si no hay red). Resto: cache-first. Google Fonts: network-first con caché.
+- Soporta peticiones `Range` (necesario para `<audio>` en Safari/iOS) devolviendo `206` desde caché.
+- **Regla:** al cambiar cualquier asset precacheado, incrementar `CACHE_NAME` (actualmente `boda-diego-liz-v75`) para invalidar cachés viejas. Si se añade un archivo crítico, agregarlo a `CORE_ASSETS`.
 
 ## 5. Backend RSVP (Google Apps Script)
 
-- `code.gs` define `doPost(e)` (anexa o actualiza fila `[Nombre y Apellido, Asistencia]` en la hoja `Confirmaciones`, usando `LockService` y evitando duplicados), `doGet()` (ping de estado), `obtenerLibro()`.
+- `code.gs` define `doPost(e)` (registra siempre una fila nueva `[Nombre y Apellido, Asistencia]` con `appendRow` en la pestaña `Confirmaciones`, usando `LockService` y sin sobrescribir homónimos), `doGet()` (ping de estado) y `obtenerLibro()`.
 - Campos del formulario: `nombre`, `apellido`, `asistencia` (`"Sí, ¡allí estaré!"` / `"No podré acompañarlos"`, normalizados en `code.gs` a `"Asistira"` / `"No asistira"`).
 - Se despliega manualmente como Web App ("Cualquier persona") desde el editor de Apps Script; la URL `/exec` resultante va en `RSVP_SCRIPT_URL`. **Si se vuelve a desplegar como nueva implementación, la URL cambia y hay que actualizarla.**
 - El front envía `URLSearchParams` con `mode: "cors"` y timeout de 22 s contra Apps Script (que responde con `Access-Control-Allow-Origin: *`), validando que el JSON devuelto tenga `resultado === "ok"` antes de mostrar éxito.
@@ -111,7 +111,7 @@ Convenciones: nombres de funciones y variables en español, camelCase; cada bloq
 > - [x] **Fecha límite informativa:** 10 de noviembre de 2026 (solo texto visible, sin bloqueos técnicos para que la novia pueda seguir recibiendo respuestas).
 > - [x] **Despliegue activo:** producción en Firebase Hosting (`https://boda-diego-liz-2026.web.app`) y código respaldado en GitHub (`main`).
 >
-> **Fase actual:** Retoques estéticos y exploración visual opcional (máscaras de papel rasgado, fotos integradas en fondo de calendario/hero, etc.).
+> **Fase actual:** Auditoría final y limpieza de redundancias completada sobre el diseño base aprobado.
 
 ## 7. Entorno de desarrollo
 

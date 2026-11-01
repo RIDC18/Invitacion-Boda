@@ -75,7 +75,7 @@ function activarReveladoScroll() {
 (function inicializarFondoAmbiental() {
   const canvas = document.getElementById("ambient-canvas");
   const wrapper = document.querySelector(".site-wrapper");
-  if (!canvas || !wrapper) return;
+  if (!canvas || !wrapper || prefiereMovimientoReducido) return;
 
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -199,7 +199,7 @@ function activarReveladoScroll() {
    ----------------------------------------------------------- */
 (function aplicarNombreInvitado() {
   const params = new URLSearchParams(window.location.search);
-  const invitado = params.get("invitado") || params.get("guest");
+  const invitado = (params.get("invitado") || params.get("guest") || "").trim();
   if (invitado) {
     const nodo = document.getElementById("gate-guest-name");
     if (nodo) nodo.textContent = invitado;
@@ -383,13 +383,6 @@ async function reproducirMusica() {
   musicaSintetica.setSilenciada(musicaSilenciada);
   await musicaSintetica.reproducir();
   actualizarIconoMusica(true, musicaSilenciada);
-}
-
-function pausarMusica() {
-  const audio = document.getElementById("bg-music");
-  if (audio) audio.pause();
-  musicaSintetica.pausar();
-  actualizarIconoMusica(false, musicaSilenciada);
 }
 
 function musicaEstaActiva() {
@@ -604,6 +597,8 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
   const elSegundos = document.getElementById("segundos");
   const elGrid = document.getElementById("countdown-grid");
   const elDone = document.getElementById("countdown-done");
+  const elLead = document.querySelector(".countdown__lead");
+  const elCaption = document.querySelector(".countdown__caption");
 
   if (!elDias) return;
 
@@ -625,7 +620,9 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
     const diferencia = FECHA_BODA - ahora;
 
     if (diferencia <= 0) {
+      if (elLead) elLead.style.display = "none";
       if (elGrid) elGrid.style.display = "none";
+      if (elCaption) elCaption.style.display = "none";
       if (elDone) elDone.style.display = "block";
       clearInterval(intervalo);
       return;
@@ -723,18 +720,7 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
 })();
 
 /* -----------------------------------------------------------
-   9. REGALOS — evita abrir enlaces pendientes
-   ----------------------------------------------------------- */
-(function inicializarRegalos() {
-  document.querySelectorAll(".btn.is-disabled").forEach((boton) => {
-    boton.addEventListener("click", (e) => {
-      e.preventDefault();
-    });
-  });
-})();
-
-/* -----------------------------------------------------------
-   10. CONFIRMACIÓN DE ASISTENCIA (RSVP)
+   9. CONFIRMACIÓN DE ASISTENCIA (RSVP)
    ----------------------------------------------------------- */
 (function inicializarRSVP() {
   const form = document.getElementById("rsvp-form");
@@ -862,7 +848,6 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
         RSVP_SCRIPT_URL.includes("script.google.com") ||
         RSVP_SCRIPT_URL.includes("script.googleusercontent.com");
 
-      let verificadoPorCors = false;
       try {
         const opcionesCors = {
           method: "POST",
@@ -881,7 +866,6 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
         if (!resultado || resultado.resultado !== "ok") {
           throw new Error(resultado?.mensaje || "El servidor RSVP no confirmó el guardado");
         }
-        verificadoPorCors = true;
       } catch (errCors) {
         // Si un bloqueador/navegador bloquea solo la redirección CORS de Apps Script (TypeError),
         // reintentamos con no-cors para no cortar el envío hacia el Sheet
@@ -900,7 +884,6 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
         if (controlador) opcionesNoCors.signal = controlador.signal;
         await fetch(RSVP_SCRIPT_URL, opcionesNoCors);
       }
-      void verificadoPorCors;
 
       const asisVal = datos.get("asistencia");
       const successTitle = document.getElementById("rsvp-success-title");
@@ -942,7 +925,7 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
 
 
 /* -----------------------------------------------------------
-   11. BARRA DE PROGRESO DE LECTURA — hilo dorado arriba de la página
+   10. BARRA DE PROGRESO DE LECTURA — hilo dorado arriba de la página
    ----------------------------------------------------------- */
 (function inicializarProgresoScroll() {
   const barra = document.getElementById("progreso-scroll");
@@ -969,7 +952,7 @@ function actualizarIconoMusica(reproduciendo, silenciada = musicaSilenciada) {
 
 
 /* -----------------------------------------------------------
-   12. DATOS DE TRANSFERENCIA — desplegable y copiado rápido de Alias / CBU
+   11. DATOS DE TRANSFERENCIA — desplegable y copiado rápido de Alias / CI
    ----------------------------------------------------------- */
 (function inicializarTransferencia() {
   const toggleBtn = document.getElementById("toggle-transfer-btn");
