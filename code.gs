@@ -70,26 +70,8 @@ function doPost(e) {
       throw new Error("Opción de asistencia inválida.");
     }
 
-    // Evita duplicados si la misma persona envía dos veces
-    const ultima = hoja.getLastRow();
-    let filaExistente = -1;
-    if (ultima > 1) {
-      const datos = hoja.getRange(2, 1, ultima - 1, 1).getValues();
-      const claveNueva = nombreCompleto.toLowerCase();
-      for (let i = 0; i < datos.length; i++) {
-        const existente = limpiarSoloLetras(datos[i][0]).toLowerCase();
-        if (existente && existente === claveNueva) {
-          filaExistente = i + 2;
-          break;
-        }
-      }
-    }
-
-    if (filaExistente === -1) {
-      hoja.appendRow([nombreCompleto, asistencia]);
-    } else {
-      hoja.getRange(filaExistente, 2).setValue(asistencia);
-    }
+    // Registra siempre cada confirmación en una fila nueva (no sobrescribe homónimos)
+    hoja.appendRow([nombreCompleto, asistencia]);
 
     return ContentService
       .createTextOutput(JSON.stringify({ resultado: "ok" }))
