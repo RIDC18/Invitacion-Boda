@@ -97,15 +97,21 @@ Convenciones: nombres de funciones y variables en español, camelCase; cada bloq
 - El front envía `URLSearchParams` con `mode: "cors"` y timeout de 22 s contra Apps Script (que responde con `Access-Control-Allow-Origin: *`), validando que el JSON devuelto tenga `resultado === "ok"` antes de mostrar éxito.
 - La URL del Web App está en texto plano en `app.js` (es público por diseño; no es un secreto, pero cualquiera podría enviar filas basura).
 
-## 6. Estado actual y pendientes (placeholders)
+## 6. Estado actual e Hito / Checkpoint (Base Funcional Finalizada)
 
-- [x] **Galería y bienvenida:** Foto de bienvenida (`img/img_01.jpg`) y selección curada de las 12 mejores fotos reales (`img/BCF_*.jpg`) ordenadas narrativamente en `#gallery-grid` con lightbox interactivo. Carga web optimizada a 1920px max.
-- [x] **Regalos / Transferencia:** Datos reales de transferencia cargados para Diego y Liz con botones de copiado rápido.
-- [x] La URL de `RSVP_SCRIPT_URL` está configurada y verificada activa (`doGet` y `doPost` con CORS operativo).
-- [ ] **Fecha límite de RSVP en HTML:** El texto visible indica confirmar antes del **1 de Noviembre de 2026** (no bloquea el envío técnicamente, pero conviene ajustar si los novios desean extender la fecha).
-- [ ] El texto de la carta/portal dice "Haz clic en el sobre" (pensado para mobile y desktop).
-- [ ] Repo sin commits: se recomienda hacer un commit inicial.
-- Bloques marcados `EDITABLE:` en comentarios HTML señalan los puntos de personalización.
+> 🏁 **CHECKPOINT — HITO FINAL FUNCIONAL (31 de Octubre de 2026)**
+> Toda la lógica central y arquitectura del sitio está **completa, probada y desplegada en producción**:
+> - [x] **Apertura de sobre interactiva:** animación fluida con audio sincronizado de *Photograph* de Ed Sheeran y efectos de sonido orgánicos de papel.
+> - [x] **Cuenta regresiva y calendario:** cálculo exacto para el 21 de noviembre de 2026 con marcado de fecha.
+> - [x] **Itinerario, ubicación y dress code:** detalles completos de la ceremonia y recepción en la Cooperativa ÑandeMba'e con enlace a Google Maps y paleta eucalipto/blanco.
+> - [x] **Regalos / Transferencia:** datos bancarios para Diego y Liz con botones de copiado rápido al portapapeles.
+> - [x] **Galería de fotos:** 12 fotografías reales curadas narrativamente y optimizadas, con visor limpio a pantalla completa (amplía al toque y cierra al clic o Escape, sin controles inferiores molestos).
+> - [x] **Backend RSVP & Google Sheets:** hoja oficial limpia de Google Sheets (`1ETEM0oO6y_pI50QHHlFamLvkGtVjad6d7ubh384no3g`) con pestaña de `Invitaciones y WhatsApp` (con enlaces automáticos) y pestaña de `Confirmaciones` (`Nombre y Apellido`, `Asistencia`). Script en Web App (`AKfycby1GOQyN8HnjQQAH1wpQYFE_T1ETJxu05VBxh64yq54BQbKZ-32sQMmsRYTIlOXLJO_`) probado y verificado.
+> - [x] **Soporte de homónimos:** cada confirmación se registra en una fila independiente sin sobrescribir a nadie con el mismo nombre y apellido.
+> - [x] **Fecha límite informativa:** 10 de noviembre de 2026 (solo texto visible, sin bloqueos técnicos para que la novia pueda seguir recibiendo respuestas).
+> - [x] **Despliegue activo:** producción en Firebase Hosting (`https://boda-diego-liz-2026.web.app`) y código respaldado en GitHub (`main`).
+>
+> **Fase actual:** Retoques estéticos y exploración visual opcional (máscaras de papel rasgado, fotos integradas en fondo de calendario/hero, etc.).
 
 ## 7. Entorno de desarrollo
 
